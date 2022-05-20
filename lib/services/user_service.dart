@@ -8,17 +8,63 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class UserService {
-
-
   @override
   Future<Usuario> getUser(String email, String password) async {
+    if (email == "" || password == "") {
+      throw new BadRequestException(
+          "El email y la contraseña son requeridos para iniciar sesión");
+    }
+
+    dynamic responseJson;
+    final response = await http.post(
+        Uri.parse( apiBaseUrl + "/login"),
+        body: {"email": email, "password": password});
+    print(response.body);
+
+    if (response.statusCode == 200) {
+      responseJson = json.decode(response.body);
+      Usuario user = Usuario.fromJson(responseJson);
+      print(user);
+      return user;
+    } else if (response.statusCode == 401) {
+      throw BadRequestException("Email o password incorrectos");
+    } else if (response.statusCode == 403) {
+      throw UnauthorisedException("No tiene permisos para acceder");
+    } else if (response.statusCode == 500) {
+      throw FetchDataException("No se pudo conectar con el servidor");
+    } else {
+      throw FetchDataException("Error desconocido");
+    }
+  }
+
+  @override
+  Future<Usuario> createUser(
+      String email, String password, String nombre, String apellido) async {
+    if (email == "" || password == "") {
+      throw new BadRequestException("El email y la contraseña son requeridos");
+    }
+
     dynamic responseJson;
     Usuario user;
-    final response = await http.post(Uri.parse("http://10.0.2.2:8081/api/login"),
-        body: {"email": email, "password": password});
-        print(response.body);
-    user = Usuario.fromJson(jsonDecode(response.body));
+    final response = await http
+        .post(Uri.parse(apiBaseUrl +  "/register"), body: {
+      "email": email,
+      "password": password,
+      "nombre": nombre,
+      "apellido": apellido
+    });
+    print(response.body);
 
-    return user;
+    if (response.statusCode == 200) {
+      responseJson = json.decode(response.body);
+      user = Usuario.fromJson(responseJson);
+      return user;
+    } else if (response.statusCode == 401) {
+      throw BadRequestException("Email o password incorrectos");
+    } else if (response.statusCode == 500) {
+      throw FetchDataException("No se pudo conectar con el servidor");
+    } else {
+      throw FetchDataException("Error desconocido");
+    }
   }
 }

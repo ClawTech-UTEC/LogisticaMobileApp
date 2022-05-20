@@ -1,3 +1,4 @@
+import 'package:clawtech_logistica_app/views/screens/crear_recepcion_screen.dart';
 import 'package:clawtech_logistica_app/views/screens/home.dart';
 import 'package:flutter/material.dart';
 
@@ -10,6 +11,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return MaterialApp(
       title: 'UTEC - Logistica App',
       theme: ThemeData(
@@ -17,8 +19,13 @@ class MyApp extends StatelessWidget {
         accentColor: Colors.blue,
         backgroundColor: Colors.red[300],
         
+        splashColor: Colors.white,
+        textTheme: const TextTheme(
+          bodyText1: TextStyle(color: Colors.white),
+          headline4: TextStyle(color: Colors.white),
+        ),
       ),
-      home:  HomePage(),
+      home:   CrearRecepcionScreen(),
     );
   }
 }

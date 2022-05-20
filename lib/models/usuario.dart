@@ -8,6 +8,7 @@ class Usuario {
   String password;
   bool active;
 
+
   Usuario(
       {required this.idUsuario,
       required this.nombre,
@@ -24,4 +25,13 @@ class Usuario {
         password: json['password'],
         active: json['active'],
       );
+
+  Map<String, dynamic> toJson() => {
+        'idUsuario': idUsuario,
+        'nombre': nombre,
+        'apellido': apellido,
+        'email': email,
+        'password': password,
+        'active': active,
+      };
 }
