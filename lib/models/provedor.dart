@@ -1,7 +1,7 @@
 import 'dart:ffi';
 
 class Provedor {
-   Long idProv;
+   int idProv;
 	
 	 String nombreProv;
 	

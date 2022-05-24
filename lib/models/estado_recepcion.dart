@@ -6,29 +6,29 @@ import 'package:clawtech_logistica_app/models/usuario.dart';
 
 class EstadoRecepcion {
     
-     Long idEstadoRecepcion;
+     int idEstadoRecepcion;
     
     
-     Recepcion recepcion;
+     Recepcion? recepcion;
 
     
-     Usuario usuario;
+     Usuario? usuario;
 
-     TipoEstadoRecepcion tipoEstado;
+     TipoEstadoRecepcion? tipoEstado;
 
 
      DateTime fecha;
-     EstadoRecepcion estadoAnterior;
+     EstadoRecepcion? estadoAnterior;
 
     
 
       EstadoRecepcion({
           required this.idEstadoRecepcion,
-          required this.recepcion,
-          required this.usuario,
-          required this.tipoEstado,
+           this.recepcion,
+           this.usuario,
+           this.tipoEstado,
           required this.fecha,
-          required this.estadoAnterior,
+           this.estadoAnterior,
         });
 
         
@@ -43,11 +43,11 @@ class EstadoRecepcion {
 
         Map<String, dynamic> toJson() => {
           "idEstadoRecepcion": idEstadoRecepcion,
-          "recepcion": recepcion.toJson(),
-          "usuario": usuario.toJson(),
-          "tipoEstado": tipoEstado.toJson(),
+          "recepcion": recepcion!.toJson(),
+          "usuario": usuario!.toJson(),
+          "tipoEstado": tipoEstado!.toJson(),
           "fecha": fecha.toIso8601String(),
-          "estadoAnterior": estadoAnterior.toJson(),
+          "estadoAnterior": estadoAnterior!.toJson(),
         };
 
         

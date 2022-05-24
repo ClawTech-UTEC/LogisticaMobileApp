@@ -21,32 +21,35 @@ class AuthenticationViewModel extends Cubit<AuthenticationState> {
       prefs.setString("token", usuario.idUsuario.toString());
       emit(AuthenticationSuccessState());
     } catch (e) {
-      if (e is BadRequestException) {
+      if (e is UnauthorisedException) {
         print(e.message);
-        emit(ErrorState(e.message));
-      } else if (e is UnauthorisedException) {
+        emit(SignInErrorState(e.message));
+      } else if (e is BadRequestException) {
         print(e.message);
-        emit(ErrorState(e.message));
+        emit(SignInErrorState(e.message));
       } else if (e is FetchDataException) {
         print(e.message);
-        emit(ErrorState(e.message));
+        emit(SignInErrorState(e.message));
       } else {
-        emit(ErrorState("Error desconocido"));
+        emit(SignInErrorState("Error al conectarte - Intentalo de nuevo"));
       }
     }
   }
 
   void initialAithentication() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    try {
-       //todo: guardar token real de jtw
-      prefs.getString("token");
-      emit(AuthenticationSuccessState( ));
-    } catch (e) {}
+
+    //todo: guardar token real de jtw
+    String? userToken = prefs.getString("token");
+    if (userToken != null) {
+      emit(AuthenticationSuccessState());
+    } else {
+      emit(SignInState());
+    }
   }
 
   void onGoToRegistrationButtomPressed() {
-    emit(SigningUpState());
+    emit(SignUpState());
   }
 
   void onGoToLoginButtomPressed() {
@@ -59,15 +62,24 @@ class AuthenticationViewModel extends Cubit<AuthenticationState> {
       Usuario user =
           await userService.createUser(email, password, nombre, apellido);
       SharedPreferences prefs = await SharedPreferences.getInstance();
-       //todo: guardar token real de jtw
+      //todo: guardar token real de jtw
       prefs.setString("token", user.idUsuario.toString());
       emit(AuthenticationSuccessState());
     } catch (e) {
       if (e is BadRequestException) {
         print(e.message);
-        emit(ErrorState(e.message));
+        emit(SignUpErrorState(message: e.message, emailRepetido: true));
+      } else {
+        emit(SignUpErrorState(
+            message: "Error al registrarte - Intentalo de nuevo"));
       }
     }
+  }
+
+  void onSignOutButtonPressed() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove("token");
+    emit(SignInState());
   }
 }
 
@@ -91,21 +103,27 @@ class AuthenticationSuccessState extends AuthenticationState {
   List<Object> get props => [];
 }
 
-class SigningUpState extends AuthenticationState {
+class SignInState extends AuthenticationState {
   @override
   List<Object> get props => [];
 }
 
-class RegistrationErrorState extends AuthenticationState {
-  RegistrationErrorState(this.message);
-  String message;
-
+class SignUpState extends AuthenticationState {
   @override
-  List<Object> get props => [message];
+  List<Object> get props => [];
 }
 
-class ErrorState extends AuthenticationState {
-  ErrorState(this.message);
+class SignUpErrorState extends AuthenticationState {
+  SignUpErrorState({this.message = "", this.emailRepetido = false});
+  String message;
+  bool emailRepetido;
+
+  @override
+  List<Object> get props => [message, emailRepetido];
+}
+
+class SignInErrorState extends AuthenticationState {
+  SignInErrorState(this.message);
   String message;
   @override
   List<Object> get props => [message];

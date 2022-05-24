@@ -1,7 +1,7 @@
  import 'dart:ffi';
 
 class TipoEstadoRecepcion {
-     Long idEstadoRecepcion;
+     int idEstadoRecepcion;
      String nombre;
 
       TipoEstadoRecepcion({

@@ -1,5 +1,5 @@
 import 'package:clawtech_logistica_app/services/user_service.dart';
-import 'package:clawtech_logistica_app/view_model/login_viewmodel.dart';
+import 'package:clawtech_logistica_app/view_model/authentication_viewmodel.dart';
 import 'package:clawtech_logistica_app/views/screens/dashboard.dart';
 import 'package:clawtech_logistica_app/views/screens/login.dart';
 import 'package:clawtech_logistica_app/views/screens/registro.dart';
@@ -25,21 +25,32 @@ class _HomePageState extends State<HomePage> {
         if (state is InitialState) {
           BlocProvider.of<AuthenticationViewModel>(context)
               .initialAithentication();
-          return Center(child: CircularProgressIndicator());
+          return LoadingPage();
         }
         if (state is LoadingState) {
-          return Center(child: CircularProgressIndicator());
+          return LoadingPage();
         } else if (state is AuthenticationSuccessState) {
           return DashboardPage();
-        } else if (state is ErrorState) {
+        } else if (state is SignInErrorState) {
           return Login(errorMessage: state.message);
-        } else if (state is SigningUpState) {
+        } else if (state is SignUpState) {
           return RegistrationPage();
-        } else if (state is RegistrationErrorState) {
+        } else if (state is SignUpErrorState) {
           return RegistrationPage(errorMessage: state.message);
         } else
           return Login();
       })),
     );
+  }
+}
+
+class LoadingPage extends StatelessWidget {
+  const LoadingPage({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(body: Center(child: CircularProgressIndicator()));
   }
 }

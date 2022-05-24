@@ -1,36 +1,38 @@
- import 'dart:ffi';
+import 'dart:ffi';
 
 import 'package:clawtech_logistica_app/models/producto.dart';
 import 'package:clawtech_logistica_app/models/recepcion.dart';
+import 'package:clawtech_logistica_app/models/tipo_producto.dart';
 
 class RecepcionProducto {
-    
-     Long idRecepcionProducto;
+  int? idRecepcionProducto;
 
-    
-     Recepcion recepcion;
-    
-     Producto producto;
-    Double cantidad;
+  int? recepcion;
 
-    RecepcionProducto({
-       required this.idRecepcionProducto,
-      required  this.recepcion,
-      required  this.producto,
-      required  this.cantidad,
-    });
+  TipoProducto producto;
+  double cantidad;
 
-    factory RecepcionProducto.fromJson(Map<String, dynamic> json) => RecepcionProducto(
-      idRecepcionProducto: json["idRecepcionProducto"],
-      recepcion: Recepcion.fromJson(json["recepcion"]),
-      producto: Producto.fromJson(json["producto"]),
-      cantidad: json["cantidad"].toDouble(),
-    );
+  RecepcionProducto({
+    this.idRecepcionProducto,
+     this.recepcion,
+    required this.producto,
+    required this.cantidad,
+  });
 
-    Map<String, dynamic> toJson() => {
-      "idRecepcionProducto": idRecepcionProducto,
-      "recepcion": recepcion.toJson(),
-      "producto": producto.toJson(),
-      "cantidad": cantidad,
-    };
+  factory RecepcionProducto.fromJson(Map<String, dynamic> json) =>
+      RecepcionProducto(
+        idRecepcionProducto: json["idRecepcionProducto"],
+        recepcion: json["recepcion"],
+        producto: TipoProducto.fromJson(json["producto"]),
+        cantidad: json["cantidad"].toDouble(),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "idRecepcionProducto": idRecepcionProducto,
+        "recepcion": recepcion,
+        "producto": producto.toJson(),
+        "cantidad": cantidad,
+      };
+
+      
 }

@@ -1,5 +1,5 @@
 import 'package:clawtech_logistica_app/services/user_service.dart';
-import 'package:clawtech_logistica_app/view_model/login_viewmodel.dart';
+import 'package:clawtech_logistica_app/view_model/authentication_viewmodel.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -50,7 +50,7 @@ class _LoginState extends State<Login> {
                                           MainAxisAlignment.center,
                                       children: [
                                         Text(
-                                          'Login',
+                                          'Login', style: Theme.of(context).textTheme.headline3,
                                         ),
                                         Divider(),
                                         Column(children: <Widget>[
@@ -60,16 +60,15 @@ class _LoginState extends State<Login> {
                                               if (value == null ||
                                                   value.isEmpty) {
                                                 return 'El Email es requerido';
-                                              }
-                                              else if (!EmailValidator.validate(
-                                                  value)) {
+                                              } else if (!EmailValidator
+                                                  .validate(value)) {
                                                 return 'El Email no es valido';
-                                              }else {
-return null;
+                                              } else {
+                                                return null;
                                               }
-                                              
                                             },
                                             decoration: const InputDecoration(
+                                              prefixIcon: Icon(Icons.email),
                                               labelText: 'Email',
                                             ),
                                           ),
@@ -84,6 +83,7 @@ return null;
                                               return null;
                                             },
                                             decoration: InputDecoration(
+                                              prefixIcon: Icon(Icons.password),
                                               labelText: 'Password',
                                             ),
                                             obscureText: true,
@@ -101,7 +101,7 @@ return null;
                                                               .text);
                                                 }
                                               },
-                                              child: Text('Login')),
+                                              child: Text('Login', )),
                                           ElevatedButton(
                                             onPressed: (() => {
                                                   BlocProvider.of<

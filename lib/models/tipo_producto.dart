@@ -57,4 +57,6 @@ class TipoProducto {
         .map<TipoProducto>((json) => TipoProducto.fromJson(json))
         .toList();
   }
+
+  
 }

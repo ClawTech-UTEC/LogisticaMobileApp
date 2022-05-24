@@ -1,4 +1,4 @@
-import 'package:clawtech_logistica_app/view_model/login_viewmodel.dart';
+import 'package:clawtech_logistica_app/view_model/authentication_viewmodel.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class RegistrationPage extends StatefulWidget {
   RegistrationPage({Key? key, this.errorMessage}) : super(key: key);
   String? errorMessage;
+
   @override
   State<RegistrationPage> createState() => _RegistrationPageState();
 }
@@ -17,8 +18,20 @@ class _RegistrationPageState extends State<RegistrationPage> {
   TextEditingController nombreController = TextEditingController();
   TextEditingController apellidoController = TextEditingController();
   final _registrationFormKey = GlobalKey<FormState>();
+  
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+   
+    
+  }
+  
+
+  
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
         backgroundColor: Theme.of(context).backgroundColor,
         body: SafeArea(
@@ -50,6 +63,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
                                         TextFormField(
                                           controller: emailController,
                                           validator: (value) {
+                                            
+                                           
                                             if (value == null ||
                                                 value.isEmpty) {
                                               return 'El Email es requerido';
@@ -61,6 +76,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                                             }
                                           },
                                           decoration: InputDecoration(
+                                             prefixIcon: Icon(Icons.email),
                                             labelText: 'Email',
                                           ),
                                         ),
@@ -78,6 +94,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                                             }
                                           },
                                           decoration: InputDecoration(
+                                             prefixIcon: Icon(Icons.password),
                                             labelText: 'Password',
                                           ),
                                         ),
@@ -97,6 +114,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                                             return null;
                                           },
                                           decoration: InputDecoration(
+                                             prefixIcon: Icon(Icons.password),
                                             labelText: 'Repite Password',
                                           ),
                                         ),
@@ -112,6 +130,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                                             return null;
                                           },
                                           decoration: InputDecoration(
+                                             prefixIcon: Icon(Icons.person),
                                             labelText: 'Nombre',
                                           ),
                                         ),
@@ -127,8 +146,11 @@ class _RegistrationPageState extends State<RegistrationPage> {
                                           },
                                           decoration: InputDecoration(
                                             labelText: 'Apellido',
+                                                                                         prefixIcon: Icon(Icons.person),
+
                                           ),
                                         ),
+
                                         ElevatedButton(
                                           child: Text('Registrar'),
                                           onPressed: () {
@@ -158,6 +180,14 @@ class _RegistrationPageState extends State<RegistrationPage> {
                                                 .onGoToLoginButtomPressed();
                                           },
                                         ),
+
+                                        if (widget.errorMessage != null)
+                                          Text(
+                                            widget.errorMessage!,
+                                            style: TextStyle(
+                                                color: Colors.red,
+                                                fontSize: 16.0),
+                                          ),
                                       ],
                                     )),
                               ]))))

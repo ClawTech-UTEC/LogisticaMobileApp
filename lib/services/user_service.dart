@@ -16,8 +16,7 @@ class UserService {
     }
 
     dynamic responseJson;
-    final response = await http.post(
-        Uri.parse( apiBaseUrl + "/login"),
+    final response = await http.post(Uri.parse(apiBaseUrl + "/loginMovil"),
         body: {"email": email, "password": password});
     print(response.body);
 
@@ -27,9 +26,7 @@ class UserService {
       print(user);
       return user;
     } else if (response.statusCode == 401) {
-      throw BadRequestException("Email o password incorrectos");
-    } else if (response.statusCode == 403) {
-      throw UnauthorisedException("No tiene permisos para acceder");
+      throw UnauthorisedException("Email o password incorrectos");
     } else if (response.statusCode == 500) {
       throw FetchDataException("No se pudo conectar con el servidor");
     } else {
@@ -46,21 +43,21 @@ class UserService {
 
     dynamic responseJson;
     Usuario user;
-    final response = await http
-        .post(Uri.parse(apiBaseUrl +  "/register"), body: {
-      "email": email,
-      "password": password,
-      "nombre": nombre,
-      "apellido": apellido
-    });
+    final response = await http.post(Uri.parse(apiBaseUrl + "/register"),
+        body: {
+          "email": email,
+          "password": password,
+          "nombre": nombre,
+          "apellido": apellido
+        });
     print(response.body);
 
     if (response.statusCode == 200) {
       responseJson = json.decode(response.body);
       user = Usuario.fromJson(responseJson);
       return user;
-    } else if (response.statusCode == 401) {
-      throw BadRequestException("Email o password incorrectos");
+    } else if (response.statusCode == 400) {
+      throw BadRequestException("Email ya existe");
     } else if (response.statusCode == 500) {
       throw FetchDataException("No se pudo conectar con el servidor");
     } else {

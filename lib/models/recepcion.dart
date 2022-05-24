@@ -7,9 +7,9 @@ import 'package:clawtech_logistica_app/models/recepcion_producto.dart';
 class Recepcion {
 
     
-     Long idRecepcion;
+     int? idRecepcion;
      String fechaRecepcion;
-     Provedor provedor;
+     Provedor? provedor;
      List<RecepcionProducto> productos = [];
 
     
@@ -17,11 +17,11 @@ class Recepcion {
 
      
       Recepcion({
-          required this.idRecepcion,
-          required this.fechaRecepcion,
-          required this.provedor,
-          required this.productos,
-          required this.estadoRecepcion,
+           this.idRecepcion,
+           this.fechaRecepcion = '',
+           this.provedor,
+           this.productos = const [],
+           this.estadoRecepcion = const [],
         });
   
         factory Recepcion.fromJson(Map<String, dynamic> json) => Recepcion(
@@ -35,7 +35,7 @@ class Recepcion {
         Map<String, dynamic> toJson() => {
           "idRecepcion": idRecepcion,
           "fechaRecepcion": fechaRecepcion,
-          "provedor": provedor.toJson(),
+          //"provedor": provedor.toJson(),
           "productos": List<RecepcionProducto>.from(productos.map((x) => x.toJson())),
           "estadoRecepcion": List<dynamic>.from(estadoRecepcion.map((x) => x.toJson())),
         };

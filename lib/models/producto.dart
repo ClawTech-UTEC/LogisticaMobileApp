@@ -3,7 +3,7 @@ import 'dart:ffi';
 import 'package:clawtech_logistica_app/models/tipo_producto.dart';
 
 class Producto {
-  Long id;
+  Long? id;
 
   TipoProducto tipoProducto;
 
@@ -12,10 +12,10 @@ class Producto {
   double cantidadReservada;
 
   Producto({
-    required this.id,
+     this.id,
     required this.tipoProducto,
-    required this.cantidadDisponible,
-    required this.cantidadReservada,
+     this.cantidadDisponible = 0,
+     this.cantidadReservada = 0,
   });
 
   factory Producto.fromJson(Map<String, dynamic> json) => Producto(
