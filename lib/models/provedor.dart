@@ -1,4 +1,7 @@
 import 'dart:ffi';
+import 'package:json_annotation/json_annotation.dart';
+
+@JsonSerializable()
 
 class Provedor {
    int idProv;

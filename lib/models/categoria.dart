@@ -1,5 +1,7 @@
 import 'dart:ffi';
 
+import 'package:json_annotation/json_annotation.dart';
+@JsonSerializable()
 class Categoria {
   int idCat;
   String nombre;

@@ -3,12 +3,15 @@
 import 'package:clawtech_logistica_app/models/estado_recepcion.dart';
 import 'package:clawtech_logistica_app/models/provedor.dart';
 import 'package:clawtech_logistica_app/models/recepcion_producto.dart';
+import 'package:json_annotation/json_annotation.dart';
+
+@JsonSerializable()
 
 class Recepcion {
 
     
      int? idRecepcion;
-     String fechaRecepcion;
+     DateTime? fechaRecepcion;
      Provedor? provedor;
      List<RecepcionProducto> productos = [];
 
@@ -18,7 +21,7 @@ class Recepcion {
      
       Recepcion({
            this.idRecepcion,
-           this.fechaRecepcion = '',
+           this.fechaRecepcion,
            this.provedor,
            this.productos = const [],
            this.estadoRecepcion = const [],
@@ -33,11 +36,12 @@ class Recepcion {
         );
   
         Map<String, dynamic> toJson() => {
-          "idRecepcion": idRecepcion,
-          "fechaRecepcion": fechaRecepcion,
-          //"provedor": provedor.toJson(),
-          "productos": List<RecepcionProducto>.from(productos.map((x) => x.toJson())),
-          "estadoRecepcion": List<dynamic>.from(estadoRecepcion.map((x) => x.toJson())),
+          // "idRecepcion": idRecepcion,
+          "fechaRecepcion": fechaRecepcion.toString(),
+          "provedor": provedor?.toJson(),
+          "productos": List<dynamic>.from(productos.map((RecepcionProducto x) => x.toJson())).toString(),
+          "estadoRecepcion": List<dynamic>.from(estadoRecepcion.map((x) => x.toJson()))
+                .toString(),
         };
 
 

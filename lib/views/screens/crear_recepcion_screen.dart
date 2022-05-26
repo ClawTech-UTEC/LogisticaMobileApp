@@ -1,7 +1,10 @@
+import 'package:clawtech_logistica_app/models/provedor.dart';
 import 'package:clawtech_logistica_app/models/recepcion.dart';
 import 'package:clawtech_logistica_app/models/recepcion_producto.dart';
 import 'package:clawtech_logistica_app/models/tipo_producto.dart';
 import 'package:clawtech_logistica_app/services/producto_service.dart';
+import 'package:clawtech_logistica_app/services/provedor_service.dart';
+import 'package:clawtech_logistica_app/services/recepcion_service.dart';
 import 'package:clawtech_logistica_app/view_model/crear_recepcion_viewmodel.dart';
 import 'package:clawtech_logistica_app/views/screens/home.dart';
 import 'package:flutter/material.dart';
@@ -15,8 +18,10 @@ class CrearRecepcionScreen extends StatefulWidget {
 }
 
 class _CrearRecepcionScreenState extends State<CrearRecepcionScreen> {
-  CrearRecepcionViewModel viewModel =
-      CrearRecepcionViewModel(productoService: ProductoService());
+  CrearRecepcionViewModel viewModel = CrearRecepcionViewModel(
+      productoService: ProductoService(),
+      provedorService: ProvedorService(),
+      recepcionService: RecepcionService());
   @override
   Widget build(BuildContext context) {
     return BlocBuilder(
@@ -26,6 +31,7 @@ class _CrearRecepcionScreenState extends State<CrearRecepcionScreen> {
             return LoadingPage();
           } else if (state is CrearRecepcionLoadedState) {
             return CrearRecepcionForm(
+                provedores: state.provedores,
                 tipoProductos: state.tipoProductos,
                 recepcionProductos: state.recepcionProductos,
                 viewModel: viewModel);
@@ -40,11 +46,15 @@ class CrearRecepcionForm extends StatefulWidget {
   CrearRecepcionForm({
     this.tipoProductos = const [],
     this.recepcionProductos = const [],
+    this.provedores = const [],
     required this.viewModel,
     Key? key,
   }) : super(key: key);
   List<TipoProducto> tipoProductos;
   List<RecepcionProducto> recepcionProductos;
+
+  List<Provedor> provedores;
+
   final CrearRecepcionViewModel viewModel;
 
   @override
@@ -54,8 +64,10 @@ class CrearRecepcionForm extends StatefulWidget {
 class _CrearRecepcionFormState extends State<CrearRecepcionForm> {
   final _formKey = GlobalKey<FormState>();
 
-  late TipoProducto _selectedTipoProducto;
+  TipoProducto? _selectedTipoProducto;
+  Provedor? _selectedProvedor;
   TextEditingController _cantidadController = TextEditingController();
+  Key _key = UniqueKey();
   late String _estado;
 
   @override
@@ -89,12 +101,46 @@ class _CrearRecepcionFormState extends State<CrearRecepcionForm> {
                           child: Column(
                             children: [
                               DropdownButtonFormField(
+                                validator: (value) => value == null
+                                    ? 'Debe seleccionar un Provedor'
+                                    : null,
+                                decoration: InputDecoration(
+                                  labelText: 'Provedor',
+                                ),
+                                value: widget.viewModel.state.selectedProvedor,
+                                onChanged: (x) {
+                                  if (x ==
+                                      widget.viewModel.state.selectedProvedor) {
+                                    print("mismo provedor");
+                                    return;
+                                  } else {
+                                    print("nuevo provedor");
+                                    _formKey.currentState!.reset();
+                                    _selectedProvedor = x as Provedor;
+                                    _selectedTipoProducto = null;
+                                    widget.viewModel.add(OnCambiarProvedorEvent(
+                                        provedor: _selectedProvedor!));
+                                  }
+                                },
+                                items: widget.provedores
+                                    .map((provedor) => DropdownMenuItem(
+                                          child: Text(provedor.nombreProv),
+                                          value: provedor,
+                                        ))
+                                    .toList(),
+                              ),
+                              DropdownButtonFormField(
+                                key: _key,
+                                validator: (value) => value == null
+                                    ? 'Debe seleccionar un Provedor'
+                                    : null,
                                 decoration: InputDecoration(
                                   labelText: 'Tipo De Producto',
                                 ),
                                 onChanged: (x) {
                                   _selectedTipoProducto = x as TipoProducto;
                                 },
+                                value: _selectedTipoProducto,
                                 items: widget.tipoProductos
                                     .map((tipoProducto) => DropdownMenuItem(
                                           child: Text(tipoProducto.nombre),
@@ -114,23 +160,11 @@ class _CrearRecepcionFormState extends State<CrearRecepcionForm> {
                                   return null;
                                 },
                               ),
-                              // DropdownButtonFormField(
-                              //   decoration: InputDecoration(
-                              //     labelText: 'Estado del producto',
-                              //   ),
-                              //   onChanged: (x) {_estado = x as String;},
-                              //   items: ["Disponible", "Reservado", "No Disponible"]
-                              //       .map((e) => DropdownMenuItem(
-                              //             child: Text(e),
-                              //             value: e,
-                              //           ))
-                              //       .toList(),
-                              // ),
                               ElevatedButton(
                                   onPressed: () {
                                     if (_formKey.currentState!.validate()) {
                                       widget.viewModel.add(AgregarProductoEvent(
-                                        _selectedTipoProducto,
+                                        _selectedTipoProducto!,
                                         double.parse(_cantidadController.text),
                                       ));
                                     }
@@ -141,41 +175,38 @@ class _CrearRecepcionFormState extends State<CrearRecepcionForm> {
                       Divider(),
                       Form(
                         child: Container(
-                          height: MediaQuery.of(context).size.height * 0.5,
+                          height: MediaQuery.of(context).size.height * 0.35,
                           child: ListView.separated(
                               itemBuilder: ((context, index) => ListTile(
-                                    title: Text(widget
-                                        .viewModel
-                                        .state
-                                        .recepcionProductos[index]
-                                        .producto
-                                        
-                                        .nombre),
+                                    title: Text(widget.viewModel.state.recepcion
+                                        .productos[index].producto.nombre),
                                     subtitle: Text(widget.viewModel.state
-                                        .recepcionProductos[index].cantidad
+                                        .recepcion.productos[index].cantidad
                                         .toString()),
                                   )),
                               separatorBuilder: (context, index) => Divider(),
-                              itemCount:
-                                  widget.viewModel.state.recepcionProductos.length),
+                              itemCount: widget
+                                  .viewModel.state.recepcion.productos.length),
                         ),
                       )
                     ],
                   ),
                 ),
               ),
-
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ElevatedButton(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
-                      Theme.of(context).accentColor,
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(
+                        Theme.of(context).accentColor,
+                      ),
                     ),
-                  ),
-                  onPressed: (){}, child: Container(
-                    width: MediaQuery.of(context).size.width,
-                    child: Center(child: Text("Crear Recepcion")))),
+                    onPressed: () {
+                      widget.viewModel.add(ConfirmarRecepcionEvent());
+                    },
+                    child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        child: Center(child: Text("Crear Recepcion")))),
               )
             ],
           ),

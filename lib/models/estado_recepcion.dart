@@ -1,20 +1,22 @@
  import 'dart:ffi';
 
+import 'package:clawtech_logistica_app/enums/tipo_estado_recepcion.dart';
 import 'package:clawtech_logistica_app/models/recepcion.dart';
-import 'package:clawtech_logistica_app/models/tipo_estado_recepcion.dart';
 import 'package:clawtech_logistica_app/models/usuario.dart';
-
+import 'package:json_annotation/json_annotation.dart';
+@JsonSerializable()
 class EstadoRecepcion {
     
      int idEstadoRecepcion;
     
-    
+      @JsonKey(ignore: true, includeIfNull: false)
+
      Recepcion? recepcion;
 
     
      Usuario? usuario;
 
-     TipoEstadoRecepcion? tipoEstado;
+     TipoEstadoRecepcion tipoEstado;
 
 
      DateTime fecha;
@@ -26,7 +28,7 @@ class EstadoRecepcion {
           required this.idEstadoRecepcion,
            this.recepcion,
            this.usuario,
-           this.tipoEstado,
+           this.tipoEstado = TipoEstadoRecepcion.PENDIENTE,
           required this.fecha,
            this.estadoAnterior,
         });
@@ -36,7 +38,7 @@ class EstadoRecepcion {
           idEstadoRecepcion: json["idEstadoRecepcion"],
           recepcion: Recepcion.fromJson(json["recepcion"]),
           usuario: Usuario.fromJson(json["usuario"]),
-          tipoEstado: TipoEstadoRecepcion.fromJson(json["tipoEstado"]),
+          tipoEstado: json["tipoEstado"],
           fecha: DateTime.parse(json["fecha"]),
           estadoAnterior: EstadoRecepcion.fromJson(json["estadoAnterior"]),
         );
@@ -45,7 +47,7 @@ class EstadoRecepcion {
           "idEstadoRecepcion": idEstadoRecepcion,
           "recepcion": recepcion!.toJson(),
           "usuario": usuario!.toJson(),
-          "tipoEstado": tipoEstado!.toJson(),
+          "tipoEstado": tipoEstado,
           "fecha": fecha.toIso8601String(),
           "estadoAnterior": estadoAnterior!.toJson(),
         };

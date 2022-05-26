@@ -1,0 +1,1 @@
+enum TipoUsuario { ADMIN, USUARIO }

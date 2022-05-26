@@ -3,7 +3,8 @@ import 'dart:ffi';
 
 import 'package:clawtech_logistica_app/models/categoria.dart';
 import 'package:clawtech_logistica_app/models/subcategoria.dart';
-
+import 'package:json_annotation/json_annotation.dart';
+@JsonSerializable()
 class TipoProducto {
   int idTipoProd;
   int codigoDeBarras;

@@ -1,9 +1,12 @@
 import 'dart:ffi';
 
 import 'package:clawtech_logistica_app/models/tipo_producto.dart';
+import 'package:json_annotation/json_annotation.dart';
+
+@JsonSerializable()
 
 class Producto {
-  Long? id;
+  int? id;
 
   TipoProducto tipoProducto;
 

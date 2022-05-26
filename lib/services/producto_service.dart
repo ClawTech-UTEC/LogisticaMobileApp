@@ -19,6 +19,20 @@ class ProductoService {
     }
   }
 
+  Future<List<TipoProducto>> getProductosByProvedor(int idProv) async {
+    final response = await http.post(Uri.parse(apiBaseUrl + '/tipoProductos/prov/'), body: {
+      'idProv': idProv.toString(),
+    });
+    print(response.body);
+    if (response.statusCode == 200) {
+      List<TipoProducto> productos =
+          TipoProducto.getTipoProductoListFromJson(response.body);
+      return productos;
+    } else {
+      throw Exception('Failed to load products');
+    }
+  }
+
   Future<List<TipoProducto>> getProductosByCategoria(int idCategoria) async {
     final response =
         await http.get(Uri.parse('getProductosByCategoria/$idCategoria'));

@@ -1,10 +1,10 @@
+import 'package:clawtech_logistica_app/enums/tipo_estado_pedido.dart';
 import 'package:clawtech_logistica_app/models/categoria.dart';
 import 'package:clawtech_logistica_app/models/estado_recepcion.dart';
 import 'package:clawtech_logistica_app/models/provedor.dart';
 import 'package:clawtech_logistica_app/models/recepcion.dart';
 import 'package:clawtech_logistica_app/models/recepcion_producto.dart';
 import 'package:clawtech_logistica_app/models/subcategoria.dart';
-import 'package:clawtech_logistica_app/models/tipo_estado_recepcion.dart';
 import 'package:clawtech_logistica_app/models/tipo_producto.dart';
 
 Provedor provedor =
@@ -47,20 +47,15 @@ RecepcionProducto recepcionProducto = RecepcionProducto(
   producto: tipoProducto,
 );
 
-TipoEstadoRecepcion tipoEstadoRecepcion = TipoEstadoRecepcion(
-  idEstadoRecepcion: 1,
-  nombre: 'Recepcion',
-);
+
 
 EstadoRecepcion estadoRecepcion = EstadoRecepcion(
   idEstadoRecepcion: 1,
-  tipoEstado: tipoEstadoRecepcion,
   fecha: DateTime.now(),
 );
 
 Recepcion recepcion = Recepcion(
   idRecepcion: 1,
-  fechaRecepcion: '2020-01-01',
   provedor: provedor,
   productos: [recepcionProducto, recepcionProducto],
   estadoRecepcion: [estadoRecepcion, estadoRecepcion],
