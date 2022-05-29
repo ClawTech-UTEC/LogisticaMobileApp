@@ -1,13 +1,12 @@
 import 'dart:ffi';
 
+import 'package:clawtech_logistica_app/mockdata.dart';
 import 'package:clawtech_logistica_app/models/producto.dart';
 import 'package:clawtech_logistica_app/models/recepcion.dart';
 import 'package:clawtech_logistica_app/models/tipo_producto.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-
 @JsonSerializable()
-
 class RecepcionProducto {
   int? idRecepcionProducto;
 
@@ -19,7 +18,7 @@ class RecepcionProducto {
 
   RecepcionProducto({
     this.idRecepcionProducto,
-     this.recepcion,
+    required this.recepcion,
     required this.producto,
     required this.cantidad,
   });
@@ -27,17 +26,16 @@ class RecepcionProducto {
   factory RecepcionProducto.fromJson(Map<String, dynamic> json) =>
       RecepcionProducto(
         idRecepcionProducto: json["idRecepcionProducto"],
-        recepcion: Recepcion.fromJson(json["recepcion"]),
+        recepcion:
+            json["recepcion"] != null ? Recepcion.fromJson(json["recepcion"]) : null,
         producto: TipoProducto.fromJson(json["producto"]),
         cantidad: json["cantidad"].toDouble(),
       );
 
   Map<String, dynamic> toJson() => {
-        // "idRecepcionProducto": idRecepcionProducto  ,
-        "recepcion": recepcion,
+        "idRecepcionProducto": idRecepcionProducto,
+        "recepcion": null,
         "producto": producto,
         "cantidad": cantidad,
       };
-
-      
 }

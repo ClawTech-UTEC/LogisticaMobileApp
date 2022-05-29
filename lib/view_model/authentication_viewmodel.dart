@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:clawtech_logistica_app/apis/api_exeptions.dart';
 import 'package:clawtech_logistica_app/models/usuario.dart';
 import 'package:clawtech_logistica_app/services/user_service.dart';
@@ -11,6 +13,9 @@ class AuthenticationViewModel extends Cubit<AuthenticationState> {
       : super(InitialState());
   final UserService userService;
 
+
+ 
+
   void onLoginButtonPressed(String email, String password) async {
     print("onLoginButtonPressed");
     try {
@@ -18,7 +23,7 @@ class AuthenticationViewModel extends Cubit<AuthenticationState> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
 
       //todo: guardar token real de jtw
-      prefs.setString("token", usuario.idUsuario.toString());
+      prefs.setString("token", jsonEncode(usuario));
       emit(AuthenticationSuccessState());
     } catch (e) {
       if (e is UnauthorisedException) {
@@ -63,7 +68,7 @@ class AuthenticationViewModel extends Cubit<AuthenticationState> {
           await userService.createUser(email, password, nombre, apellido);
       SharedPreferences prefs = await SharedPreferences.getInstance();
       //todo: guardar token real de jtw
-      prefs.setString("token", user.idUsuario.toString());
+      prefs.setString("token", jsonEncode(user));
       emit(AuthenticationSuccessState());
     } catch (e) {
       if (e is BadRequestException) {

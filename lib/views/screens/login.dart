@@ -28,7 +28,7 @@ class _LoginState extends State<Login> {
                     child: Column(children: [
                   Text(
                     'Clawtech Logistica App',
-                    style: Theme.of(context).textTheme.headline4,
+                    style: Theme.of(context).textTheme.headlineMedium,
                   ),
                   Padding(
                       padding: const EdgeInsets.symmetric(
@@ -50,7 +50,10 @@ class _LoginState extends State<Login> {
                                           MainAxisAlignment.center,
                                       children: [
                                         Text(
-                                          'Login', style: Theme.of(context).textTheme.headline3,
+                                          'Login',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .headlineLarge,
                                         ),
                                         Divider(),
                                         Column(children: <Widget>[
@@ -101,7 +104,9 @@ class _LoginState extends State<Login> {
                                                               .text);
                                                 }
                                               },
-                                              child: Text('Login', )),
+                                              child: Text(
+                                                'Login',
+                                              )),
                                           ElevatedButton(
                                             onPressed: (() => {
                                                   BlocProvider.of<

@@ -23,14 +23,21 @@ class MyApp extends StatelessWidget {
           backgroundColor: Colors.red[300],
           splashColor: Colors.white,
           textTheme: GoogleFonts.robotoTextTheme(textTheme).copyWith(
-              bodyText1: TextStyle(color: Colors.white),
-              headline3: GoogleFonts.cevicheOne(
+              bodyMedium: TextStyle(color: Colors.black),
+              bodySmall: TextStyle(color: Colors.black),
+              headlineSmall: TextStyle(color: Colors.black),
+              headlineMedium: TextStyle(color: Colors.white),
+              headlineLarge: GoogleFonts.cevicheOne(
                 textStyle: TextStyle(
                   color: Colors.grey[700],
                   decoration: TextDecoration.underline,
                 ),
               ),
-              headline4: TextStyle(color: Colors.white))),
+              titleLarge: TextStyle(color: Colors.black),
+              titleSmall: TextStyle(color: Colors.black)
+              
+              )),
+              
       home: HomePage(),
     );
   }

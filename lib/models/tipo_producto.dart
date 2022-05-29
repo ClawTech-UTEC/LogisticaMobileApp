@@ -48,8 +48,8 @@ class TipoProducto {
      
         "neto": neto,
         "precio": precio,
-        "categoria": categoria,
-        "subCat": subCat,
+        "categoria": categoria.toJson(),
+        "subCat": subCat.toJson(),
       };
 
   static List<TipoProducto> getTipoProductoListFromJson(String jsonObjects) {

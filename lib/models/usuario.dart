@@ -5,20 +5,20 @@ import 'package:json_annotation/json_annotation.dart';
 
 class Usuario {
   int idUsuario;
-  String nombre;
-  String apellido;
-  String email;
-  String password;
-  bool active;
+  String? nombre;
+  String? apellido;
+  String? email;
+  String? password;
+  bool? active;
 
 
   Usuario(
       {required this.idUsuario,
-      required this.nombre,
-      required this.apellido,
-      required this.email,
-      required this.password,
-      required this.active});
+       this.nombre,
+       this.apellido,
+       this.email,
+       this.password,
+       this.active});
 
   factory Usuario.fromJson(Map<String, dynamic> json) => Usuario(
         idUsuario: json['idUsuario'],

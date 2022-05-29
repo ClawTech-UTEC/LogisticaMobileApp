@@ -45,6 +45,7 @@ RecepcionProducto recepcionProducto = RecepcionProducto(
   idRecepcionProducto: 1,
   cantidad: 1,
   producto: tipoProducto,
+  recepcion: recepcion
 );
 
 
