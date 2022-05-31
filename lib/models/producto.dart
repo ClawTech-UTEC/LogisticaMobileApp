@@ -10,9 +10,9 @@ class Producto {
 
   TipoProducto tipoProducto;
 
-  double cantidadDisponible;
+  int cantidadDisponible;
 
-  double cantidadReservada;
+  int cantidadReservada;
 
   Producto({
      this.id,
@@ -24,8 +24,8 @@ class Producto {
   factory Producto.fromJson(Map<String, dynamic> json) => Producto(
         id: json["id"],
         tipoProducto: TipoProducto.fromJson(json["tipoProducto"]),
-        cantidadDisponible: json["cantidadDisponible"].toDouble(),
-        cantidadReservada: json["cantidadReservada"].toDouble(),
+        cantidadDisponible: json["cantidadDisponible"].toInt(),
+        cantidadReservada: json["cantidadReservada"].toInt(),
       );
 
   Map<String, dynamic> toJson() => {

@@ -9,7 +9,12 @@ import 'package:clawtech_logistica_app/models/provedor.dart';
 import 'package:http/http.dart' as http;
 
 class ProvedorService {
+  static final ProvedorService _instance = new ProvedorService.internal();
+  factory ProvedorService() => _instance;
+  ProvedorService.internal();
   Future<List<Provedor>> getProvedores() async {
+
+    
     final response = await http.get(Uri.parse(apiBaseUrl + "/prov"));
     if (response.statusCode == 200) {
       final responseJson = json.decode(response.body);

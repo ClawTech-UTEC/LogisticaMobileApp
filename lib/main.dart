@@ -16,6 +16,7 @@ class MyApp extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'UTEC - Logistica App',
       theme: ThemeData(
           primarySwatch: Colors.red,
@@ -25,7 +26,7 @@ class MyApp extends StatelessWidget {
           textTheme: GoogleFonts.robotoTextTheme(textTheme).copyWith(
               bodyMedium: TextStyle(color: Colors.black),
               bodySmall: TextStyle(color: Colors.black),
-              headlineSmall: TextStyle(color: Colors.black),
+              headlineSmall: TextStyle(color: Colors.white),
               headlineMedium: TextStyle(color: Colors.white),
               headlineLarge: GoogleFonts.cevicheOne(
                 textStyle: TextStyle(

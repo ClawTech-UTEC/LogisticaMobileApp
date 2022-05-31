@@ -1,6 +1,7 @@
 import 'package:clawtech_logistica_app/view_model/authentication_viewmodel.dart';
+import 'package:clawtech_logistica_app/views/screens/crear_pedido_screen.dart';
 import 'package:clawtech_logistica_app/views/screens/crear_recepcion_screen.dart';
-import 'package:clawtech_logistica_app/views/screens/recepciones.dart';
+import 'package:clawtech_logistica_app/views/screens/recepciones_listado.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -12,11 +13,14 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
+  PageController _pageController = PageController(
+    initialPage: 0,
+  );
   int _selectedIndex = 0;
-
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+      _pageController.jumpToPage(index);
     });
   }
 
@@ -47,7 +51,13 @@ class _DashboardPageState extends State<DashboardPage> {
           ],
         ),
         backgroundColor: Theme.of(context).backgroundColor,
-        body: _selectedIndex == 0 ? ResumenPrincipal() : ListadoRecepciones(),
+        body: PageView(
+          children: [
+            ResumenPrincipal(),
+            ListadoRecepciones(),
+          ],
+          controller: _pageController,
+        ),
         bottomNavigationBar: BottomNavigationBar(
           elevation: 0,
           showUnselectedLabels: true,
@@ -157,7 +167,13 @@ class PedidosCard extends StatelessWidget {
                             backgroundColor:
                                 MaterialStateProperty.all(Colors.transparent),
                             elevation: MaterialStateProperty.all(0)),
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => CrearPedidoScreen()),
+                          );
+                        },
                         child: Text(
                           "Crear nuevo pedido",
                           style: TextStyle(color: Colors.blueAccent),
@@ -178,55 +194,56 @@ class RecepcionesCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height * 0.3,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text("Recepciones",
-                        style: Theme.of(context).textTheme.headline5),
-                    Expanded(child: Container()),
-                    Column(
-                      children: [
-                        Text("1 recepcion nueva"),
-                        Text("1 recepcion pendientes de aprovar")
-                      ],
-                    ),
-                  ],
-                ),
-                Expanded(child: Container()),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    ElevatedButton(
-                        style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all(Colors.transparent),
-                            elevation: MaterialStateProperty.all(0)),
-                        onPressed: () {},
-                        child: TextButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      CrearRecepcionScreen()),
-                            );
-                          },
-                          
-                          child: Text("Crear nueva recepcion",  style: TextStyle(color: Colors.blueAccent)),
-                         
-                        )),
-                  ],
-                )
-              ],
-            )),
+    return Hero(
+      tag: "recepciones_card",
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height * 0.3,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text("Recepciones",
+                          style: Theme.of(context).textTheme.headline5),
+                      Expanded(child: Container()),
+                      Column(
+                        children: [
+                          Text("1 recepcion nueva"),
+                          Text("1 recepcion pendientes de aprovar")
+                        ],
+                      ),
+                    ],
+                  ),
+                  Expanded(child: Container()),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      ElevatedButton(
+                          style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStateProperty.all(Colors.transparent),
+                              elevation: MaterialStateProperty.all(0)),
+                          onPressed: () {},
+                          child: TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => CrearRecepcionScreen()),
+                              );
+                            },
+                            child: Text("Crear nueva recepcion",
+                                style: TextStyle(color: Colors.blueAccent)),
+                          )),
+                    ],
+                  )
+                ],
+              )),
+        ),
       ),
     );
   }

@@ -19,21 +19,9 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Theme.of(context).backgroundColor,
-        body: SafeArea(
-            child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SingleChildScrollView(
-                    child: Column(children: [
-                  Text(
-                    'Clawtech Logistica App',
-                    style: Theme.of(context).textTheme.headlineMedium,
-                  ),
-                  Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0, vertical: 32.0),
-                      child: Card(
+    return   Card(
+                          shadowColor: Colors.red,
+                          elevation: 10,
                           child: Padding(
                               padding: const EdgeInsets.all(16.0),
                               child: Column(children: [
@@ -122,7 +110,7 @@ class _LoginState extends State<Login> {
                                             : Container()
                                       ]),
                                 ),
-                              ]))))
-                ])))));
+                              ])
+                ));
   }
 }

@@ -1,6 +1,7 @@
 import 'package:barcode_widget/barcode_widget.dart';
 import 'package:clawtech_logistica_app/models/recepcion.dart';
 import 'package:clawtech_logistica_app/models/recepcion_producto.dart';
+import 'package:clawtech_logistica_app/views/screens/controllar_recepcion_screen.dart';
 import 'package:flutter/material.dart';
 
 class CardDetallesRecepcion extends StatefulWidget {
@@ -30,7 +31,8 @@ class _CardDetallesRecepcionState extends State<CardDetallesRecepcion> {
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   BarcodeWidget(
-                    height: 30, drawText: false,
+                    height: 30,
+                    drawText: false,
                     barcode: Barcode.code128(),
                     data: '${widget.recepcion.idRecepcion}',
                   )
@@ -87,9 +89,14 @@ class _CardDetallesRecepcionState extends State<CardDetallesRecepcion> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   ElevatedButton(
-                    child: Text('Aceptar'),
+                    child: Text('Controllar'),
                     onPressed: () {
-                      Navigator.pop(context);
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ControllarRecepcionScreen(
+                                    recepcion: widget.recepcion,
+                                  )));
                     },
                   ),
                   ElevatedButton(
@@ -100,7 +107,6 @@ class _CardDetallesRecepcionState extends State<CardDetallesRecepcion> {
                   ),
                 ],
               ),
-              
             ],
           ),
         ),

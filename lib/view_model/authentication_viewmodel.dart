@@ -13,9 +13,6 @@ class AuthenticationViewModel extends Cubit<AuthenticationState> {
       : super(InitialState());
   final UserService userService;
 
-
- 
-
   void onLoginButtonPressed(String email, String password) async {
     print("onLoginButtonPressed");
     try {

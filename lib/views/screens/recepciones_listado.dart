@@ -29,11 +29,12 @@ class _ListadoRecepcionesState extends State<ListadoRecepciones> {
         builder: (context, ListadoRecepcionesState state) {
           return state.state == ListadoRecepcionesStateEnum.loading
               ? LoadingPage()
-              : SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
+              : Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        height: MediaQuery.of(context).size.height * 0.1,
                         child: TextField(
                           controller: _searchController,
                           style: TextStyle(color: Colors.black),
@@ -72,18 +73,22 @@ class _ListadoRecepcionesState extends State<ListadoRecepciones> {
                           ),
                         ),
                       ),
-                      Container(
-                        height: MediaQuery.of(context).size.height * 0.6,
-                        child: ListView.builder(
-                            itemCount: state.recepciones.length,
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                  padding: const EdgeInsets.all(8.0),
+                    ),
+                    Container(
+                      height: MediaQuery.of(context).size.height * 0.6,
+                      child: ListView.builder(
+                          itemCount: state.recepciones.length,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Hero(
+                                  tag:
+                                      "recepciones_card${state.recepciones[index].idRecepcion}",
                                   child: ListTile(
                                     tileColor: Colors.white,
                                     title: Text('Recepcion $index'),
                                     subtitle: Text(
-                                        'Estado: ${state.recepciones[index].estadoRecepcion.last.tipoEstado}'),
+                                        'Estado: ${state.recepciones[index].estadoRecepcion.last.tipoEstado.name}'),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(10),
                                     ),
@@ -98,11 +103,11 @@ class _ListadoRecepcionesState extends State<ListadoRecepciones> {
                                                         .recepciones[index])),
                                       );
                                     },
-                                  ));
-                            }),
-                      )
-                    ],
-                  ),
+                                  ),
+                                ));
+                          }),
+                    )
+                  ],
                 );
         });
   }

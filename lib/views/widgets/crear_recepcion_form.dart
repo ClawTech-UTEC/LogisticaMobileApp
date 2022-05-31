@@ -42,105 +42,108 @@ class _CrearRecepcionFormState extends State<CrearRecepcionForm> {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    Form(
-                        key: _formKey,
-                        child: Column(
-                          children: [
-                            DropdownButtonFormField(
-                              validator: (value) => value == null
-                                  ? 'Debe seleccionar un Provedor'
-                                  : null,
-                              decoration: InputDecoration(
-                                labelText: 'Provedor',
-                              ),
-                              value: widget.viewModel.state.selectedProvedor,
-                              onChanged: (x) {
-                                if (x ==
-                                    widget.viewModel.state.selectedProvedor) {
-                                  print("mismo provedor");
-                                  return;
-                                } else {
-                                  print("nuevo provedor");
-                                  _formKey.currentState!.reset();
-                                  _selectedProvedor = x as Provedor;
-                                  _selectedTipoProducto = null;
-                                  widget.viewModel.add(OnCambiarProvedorEvent(
-                                      provedor: _selectedProvedor!));
-                                }
-                              },
-                              items: widget.provedores
-                                  .map((provedor) => DropdownMenuItem(
-                                        child: Text(provedor.nombreProv),
-                                        value: provedor,
-                                      ))
-                                  .toList(),
-                            ),
-                            DropdownButtonFormField(
-                              key: _key,
-                              validator: (value) => value == null
-                                  ? 'Debe seleccionar un Provedor'
-                                  : null,
-                              decoration: InputDecoration(
-                                labelText: 'Tipo De Producto',
-                              ),
-                              onChanged: (x) {
-                                _selectedTipoProducto = x as TipoProducto;
-                              },
-                              value: _selectedTipoProducto,
-                              items: widget.tipoProductos
-                                  .map((tipoProducto) => DropdownMenuItem(
-                                        child: Text(tipoProducto.nombre),
-                                        value: tipoProducto,
-                                      ))
-                                  .toList(),
-                            ),
-                            TextFormField(
-                              controller: _cantidadController,
-                              decoration: InputDecoration(
-                                labelText: 'Cantidad',
-                              ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Por favor ingrese una cantidad';
-                                }
-                                return null;
-                              },
-                            ),
-                            ElevatedButton(
-                                onPressed: () {
-                                  if (_formKey.currentState!.validate()) {
-                                    widget.viewModel.add(AgregarProductoEvent(
-                                      _selectedTipoProducto!,
-                                      double.parse(_cantidadController.text),
-                                    ));
+            Hero(
+              tag: "recepciones_card",
+              child: Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      Form(
+                          key: _formKey,
+                          child: Column(
+                            children: [
+                              DropdownButtonFormField(
+                                validator: (value) => value == null
+                                    ? 'Debe seleccionar un Provedor'
+                                    : null,
+                                decoration: InputDecoration(
+                                  labelText: 'Provedor',
+                                ),
+                                value: widget.viewModel.state.selectedProvedor,
+                                onChanged: (x) {
+                                  if (x ==
+                                      widget.viewModel.state.selectedProvedor) {
+                                    print("mismo provedor");
+                                    return;
+                                  } else {
+                                    print("nuevo provedor");
+                                    _formKey.currentState!.reset();
+                                    _selectedProvedor = x as Provedor;
+                                    _selectedTipoProducto = null;
+                                    widget.viewModel.add(OnCambiarProvedorEvent(
+                                        provedor: _selectedProvedor!));
                                   }
                                 },
-                                child: Text("Agregar Producto"))
-                          ],
-                        )),
-                    Divider(),
-                    Form(
-                      child: Container(
-                        height: MediaQuery.of(context).size.height * 0.35,
-                        child: ListView.separated(
-                            itemBuilder: ((context, index) => ListTile(
-                                  title: Text(widget.viewModel.state.recepcion
-                                      .productos[index].producto.nombre),
-                                  subtitle: Text(widget.viewModel.state
-                                      .recepcion.productos[index].cantidad
-                                      .toString()),
-                                )),
-                            separatorBuilder: (context, index) => Divider(),
-                            itemCount: widget
-                                .viewModel.state.recepcion.productos.length),
-                      ),
-                    )
-                  ],
+                                items: widget.provedores
+                                    .map((provedor) => DropdownMenuItem(
+                                          child: Text(provedor.nombreProv),
+                                          value: provedor,
+                                        ))
+                                    .toList(),
+                              ),
+                              DropdownButtonFormField(
+                                key: _key,
+                                validator: (value) => value == null
+                                    ? 'Debe seleccionar un Provedor'
+                                    : null,
+                                decoration: InputDecoration(
+                                  labelText: 'Tipo De Producto',
+                                ),
+                                onChanged: (x) {
+                                  _selectedTipoProducto = x as TipoProducto;
+                                },
+                                value: _selectedTipoProducto,
+                                items: widget.tipoProductos
+                                    .map((tipoProducto) => DropdownMenuItem(
+                                          child: Text(tipoProducto.nombre),
+                                          value: tipoProducto,
+                                        ))
+                                    .toList(),
+                              ),
+                              TextFormField(
+                                controller: _cantidadController,
+                                decoration: InputDecoration(
+                                  labelText: 'Cantidad',
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Por favor ingrese una cantidad';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              ElevatedButton(
+                                  onPressed: () {
+                                    if (_formKey.currentState!.validate()) {
+                                      widget.viewModel.add(AgregarProductoEvent(
+                                        _selectedTipoProducto!,
+                                        double.parse(_cantidadController.text),
+                                      ));
+                                    }
+                                  },
+                                  child: Text("Agregar Producto"))
+                            ],
+                          )),
+                      Divider(),
+                      Form(
+                        child: Container(
+                          height: MediaQuery.of(context).size.height * 0.35,
+                          child: ListView.separated(
+                              itemBuilder: ((context, index) => ListTile(
+                                    title: Text(widget.viewModel.state.recepcion
+                                        .productos[index].producto.nombre),
+                                    subtitle: Text(widget.viewModel.state
+                                        .recepcion.productos[index].cantidad
+                                        .toString()),
+                                  )),
+                              separatorBuilder: (context, index) => Divider(),
+                              itemCount: widget
+                                  .viewModel.state.recepcion.productos.length),
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),

@@ -8,6 +8,12 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class RecepcionService {
+static final RecepcionService _instance = new RecepcionService.internal();
+  factory RecepcionService() => _instance;
+  RecepcionService.internal();
+
+
+
   Future<Recepcion> createRec(Recepcion recepcion) async {
     print("-----");
     print(recepcion.toJson());

@@ -8,6 +8,10 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class UserService {
+  static final UserService _instance = new UserService.internal();
+  factory UserService() => _instance;
+  UserService.internal();
+
   @override
   Future<Usuario> getUser(String email, String password) async {
     if (email == "" || password == "") {

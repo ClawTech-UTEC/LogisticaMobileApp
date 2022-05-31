@@ -1,6 +1,8 @@
 import 'package:clawtech_logistica_app/constants.dart';
+import 'package:clawtech_logistica_app/models/producto.dart';
 import 'package:clawtech_logistica_app/models/tipo_producto.dart';
 import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class ProductoService {
   static final ProductoService _instance = new ProductoService.internal();
@@ -20,7 +22,8 @@ class ProductoService {
   }
 
   Future<List<TipoProducto>> getProductosByProvedor(int idProv) async {
-    final response = await http.post(Uri.parse(apiBaseUrl + '/tipoProductos/prov/'), body: {
+    final response =
+        await http.post(Uri.parse(apiBaseUrl + '/tipoProductos/prov/'), body: {
       'idProv': idProv.toString(),
     });
     print(response.body);
@@ -68,4 +71,6 @@ class ProductoService {
       throw Exception('Failed to load post');
     }
   }
+
+ 
 }
