@@ -1,10 +1,11 @@
+import 'package:clawtech_logistica_app/enums/tipo_estado_pedido.dart';
 import 'package:clawtech_logistica_app/models/pedidos.dart';
 import 'package:clawtech_logistica_app/models/usuario.dart';
 
 class EstadoPedido {
   int? idEstadoPedido;
 
-  List<Pedido> pedidos;
+  Pedido? pedidos;
 
   DateTime fechaPedido;
 
@@ -12,33 +13,38 @@ class EstadoPedido {
 
   EstadoPedido? estadosPedidosAnteriores;
 
+  TipoEstadoPedido tipoEstadoPedido;
+
   EstadoPedido({
     this.idEstadoPedido,
-    required this.pedidos,
+     this.pedidos,
     required this.fechaPedido,
     required this.usuarios,
     this.estadosPedidosAnteriores,
+    required this.tipoEstadoPedido,
   });
 
   factory EstadoPedido.fromJson(Map<String, dynamic> json) => EstadoPedido(
         idEstadoPedido: json["idEstadoPedido"],
         pedidos:
-            List<Pedido>.from(json["pedidos"].map((x) => Pedido.fromJson(x))),
+            Pedido.fromJson(json["pedidos"] == null ? null : json["pedidos"]),
         fechaPedido: DateTime.parse(json["fechaPedido"]),
         usuarios: Usuario.fromJson(json["usuarios"]),
         estadosPedidosAnteriores: json["estadosPedidosAnteriores"] == null
             ? null
             : EstadoPedido.fromJson(json["estadosPedidosAnteriores"]),
+        tipoEstadoPedido: TipoEstadoPedido.values[json["tipoEstadoPedido"]],
       );
 
   Map<String, dynamic> toJson() => {
         "idEstadoPedido": idEstadoPedido,
-        "pedidos": List<dynamic>.from(pedidos.map((x) => x.toJson())),
+        "pedidos":pedidos,
         "fechaPedido":
             "${fechaPedido.year.toString().padLeft(4, '0')}-${fechaPedido.month.toString().padLeft(2, '0')}-${fechaPedido.day.toString().padLeft(2, '0')}",
         "usuarios": usuarios.toJson(),
         "estadosPedidosAnteriores": estadosPedidosAnteriores == null
             ? null
             : estadosPedidosAnteriores?.toJson(),
+        "tipoEstadoPedido": tipoEstadoPedido.name,
       };
 }

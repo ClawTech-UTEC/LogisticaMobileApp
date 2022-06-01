@@ -18,6 +18,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'UTEC - Logistica App',
+      
       theme: ThemeData(
           primarySwatch: Colors.red,
           accentColor: Colors.blue,
@@ -35,7 +36,8 @@ class MyApp extends StatelessWidget {
                 ),
               ),
               titleLarge: TextStyle(color: Colors.black),
-              titleSmall: TextStyle(color: Colors.black)
+              titleSmall: TextStyle(color: Colors.black),
+            
               
               )),
               

@@ -25,6 +25,8 @@ class CrearRecepcionViewModel
     on<AgregarProductoEvent>(agregarProducto);
     on<OnCambiarProvedorEvent>(loadProductos);
     on<ConfirmarRecepcionEvent>(confirmarRecepcion);
+
+    add(OnStartedEvent());
   }
   final ProductoService productoService;
   final ProvedorService provedorService;
@@ -104,6 +106,7 @@ class CrearRecepcionViewModel
     emit(CrearRecepcionRecepcionCreadaState(recepcion: recepcion));
   }
 }
+
 //TODO: simplificar el codigo
 abstract class CrearRecepcionEvent extends Equatable {}
 

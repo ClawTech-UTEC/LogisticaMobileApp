@@ -46,4 +46,23 @@ class PedidosService {
       throw Exception('Failed to load pedidos');
     }
   }
+
+  Future<Pedido> createPedido(Pedido pedido) async {
+    print(jsonEncode(pedido.toJson()));
+    final response = await http.post(
+      Uri.parse(apiBaseUrl + '/pedidos/'),
+      body: jsonEncode(pedido.toJson()),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+    print(response.body);
+      print(response.statusCode);
+    if (response.statusCode == 201) {
+      final parsed = json.decode(response.body).cast<Map<String, dynamic>>();
+      return Pedido.fromJson(parsed);
+    } else {
+      throw Exception('Failed to create pedidos');
+    }
+  }
 }

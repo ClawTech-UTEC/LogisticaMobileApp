@@ -148,7 +148,7 @@ class PedidosCard extends StatelessWidget {
                 Row(
                   children: [
                     Text("Pedidos",
-                        style: Theme.of(context).textTheme.headline5),
+                        style: Theme.of(context).textTheme.titleLarge),
                     Expanded(child: Container()),
                     Column(
                       children: [
@@ -208,7 +208,7 @@ class RecepcionesCard extends StatelessWidget {
                   Row(
                     children: [
                       Text("Recepciones",
-                          style: Theme.of(context).textTheme.headline5),
+                          style: Theme.of(context).textTheme.titleLarge),
                       Expanded(child: Container()),
                       Column(
                         children: [
