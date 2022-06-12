@@ -1,5 +1,6 @@
 import 'package:clawtech_logistica_app/models/producto.dart';
 import 'package:clawtech_logistica_app/view_model/crear_pedido_viewmodel.dart';
+import 'package:clawtech_logistica_app/views/widgets/card_general.dart';
 import 'package:flutter/material.dart';
 
 class FinalizarCreacionPedido extends StatefulWidget {
@@ -17,47 +18,52 @@ class FinalizarCreacionPedido extends StatefulWidget {
 class _FinalizarCreacionPedidoState extends State<FinalizarCreacionPedido> {
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            
-              Text(
-                    'Resumen de pedido:',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.grey[600]),
-                  ),
-                Divider(
-                  thickness: 1,
-                ),
+    return CardGeneral(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              
                 Text(
-                  'Cliente:',
-                  style: Theme.of(context).textTheme.titleSmall
-                  ?.copyWith(color: Colors.grey[600]),
-                ),
-                ListTile(
-                  title: Text(
-                    'Nomnbre: ${widget.viewModel.state.cliente == null ? '' : widget.viewModel.state.cliente?.nombre}',
-                    style: Theme.of(context).textTheme.bodyText2,
+                      'Resumen de pedido:',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.grey[600]),
+                    ),
+                  Divider(
+                    thickness: 1,
                   ),
-                  subtitle: Text(
-                    'Direccion: ${widget.viewModel.state.cliente == null ? '' :  widget.viewModel.state.cliente!.direccion}',
-                    style: Theme.of(context).textTheme.bodyText2,
+                  Text(
+                    'Cliente:',
+                    style: Theme.of(context).textTheme.titleSmall
+                    ?.copyWith(color: Colors.grey[600]),
                   ),
-                ),
-                 Divider(
-              thickness: 1,
-            ),
-                Text(
-                  'Productos:',
-                  style: Theme.of(context).textTheme.titleSmall
-                  ?.copyWith(color: Colors.grey[600]),
-                ),
-            widget.viewModel.state.cantidadPorProducto.isNotEmpty ?    _createPedidoProductsDataTable(
-                    widget.viewModel.state.cantidadPorProducto) : Container(),
-              ],
-            
+                  ListTile(
+                    title: Text(
+                      'Nomnbre: ${widget.viewModel.state.cliente == null ? '' : widget.viewModel.state.cliente?.nombre}',
+                      style: Theme.of(context).textTheme.bodyText2,
+                    ),
+                    subtitle: Text(
+                      'Direccion: ${widget.viewModel.state.cliente == null ? '' :  widget.viewModel.state.cliente!.direccion}',
+                      style: Theme.of(context).textTheme.bodyText2,
+                    ),
+                  ),
+                   Divider(
+                thickness: 1,
+              ),
+                  Text(
+                    'Productos:',
+                    style: Theme.of(context).textTheme.titleSmall
+                    ?.copyWith(color: Colors.grey[600]),
+                  ),
+              widget.viewModel.state.cantidadPorProducto.isNotEmpty ?    FittedBox(
+                fit: BoxFit.fitWidth,
+                child: _createPedidoProductsDataTable(
+                        widget.viewModel.state.cantidadPorProducto),
+              ) : Container(),
+                ],
+              
+          ),
         ),
       ),
     );
@@ -65,7 +71,7 @@ class _FinalizarCreacionPedidoState extends State<FinalizarCreacionPedido> {
 }
 
 DataTable _createPedidoProductsDataTable(
-  Map<Producto, int> productos,
+  Map<Producto, double> productos,
 ) {
   return DataTable(
       columns: _createPedidoProductsColumns(),
@@ -80,7 +86,7 @@ List<DataColumn> _createPedidoProductsColumns() {
   ];
 }
 
-List<DataRow> _createPedidoProductsRows(Map<Producto, int> productos) {
+List<DataRow> _createPedidoProductsRows(Map<Producto, double> productos) {
   List<DataRow> list = [];
 
   productos.forEach((producto, cantidad) => list.add(DataRow(

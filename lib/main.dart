@@ -1,8 +1,12 @@
+import 'package:clawtech_logistica_app/services/user_service.dart';
+import 'package:clawtech_logistica_app/view_model/authentication_viewmodel.dart';
 import 'package:clawtech_logistica_app/views/screens/crear_recepcion_screen.dart';
 import 'package:clawtech_logistica_app/views/screens/home.dart';
 import 'package:clawtech_logistica_app/views/screens/login.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,7 +19,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
-    return MaterialApp(
+    return BlocProvider(
+      create: (_) => AuthenticationViewModel(userService: UserService()),
+      child: MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'UTEC - Logistica App',
       
@@ -41,7 +47,7 @@ class MyApp extends StatelessWidget {
               
               )),
               
-      home: HomePage(),
+      home:  LoaderOverlay(child: HomePage())),
     );
   }
 }

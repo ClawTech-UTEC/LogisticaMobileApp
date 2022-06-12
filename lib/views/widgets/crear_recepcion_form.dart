@@ -1,7 +1,11 @@
 import 'package:clawtech_logistica_app/models/provedor.dart';
 import 'package:clawtech_logistica_app/models/tipo_producto.dart';
+import 'package:clawtech_logistica_app/services/provedor_service.dart';
 import 'package:clawtech_logistica_app/view_model/crear_recepcion_viewmodel.dart';
+import 'package:clawtech_logistica_app/view_model/events/crear_recepcion_events.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class CrearRecepcionForm extends StatefulWidget {
   CrearRecepcionForm({
@@ -53,14 +57,24 @@ class _CrearRecepcionFormState extends State<CrearRecepcionForm> {
                           key: _formKey,
                           child: Column(
                             children: [
-                              DropdownButtonFormField(
+                              DropdownSearch<Provedor>(
+                                 popupProps: PopupProps.menu(
+                                  
+                      
+                                ),
+                                
                                 validator: (value) => value == null
                                     ? 'Debe seleccionar un Provedor'
                                     : null,
-                                decoration: InputDecoration(
+                                dropdownSearchDecoration: InputDecoration(
                                   labelText: 'Provedor',
                                 ),
-                                value: widget.viewModel.state.selectedProvedor,
+                                selectedItem: widget.viewModel.state.selectedProvedor,
+                                itemAsString: (item) => item.nombreProv,
+                                asyncItems: (searchValue) async {
+                                  return await ProvedorService().getProvedoresByName(searchValue);
+                                },
+                                 
                                 onChanged: (x) {
                                   if (x ==
                                       widget.viewModel.state.selectedProvedor) {
@@ -71,16 +85,13 @@ class _CrearRecepcionFormState extends State<CrearRecepcionForm> {
                                     _formKey.currentState!.reset();
                                     _selectedProvedor = x as Provedor;
                                     _selectedTipoProducto = null;
+                                    
                                     widget.viewModel.add(OnCambiarProvedorEvent(
                                         provedor: _selectedProvedor!));
                                   }
                                 },
                                 items: widget.provedores
-                                    .map((provedor) => DropdownMenuItem(
-                                          child: Text(provedor.nombreProv),
-                                          value: provedor,
-                                        ))
-                                    .toList(),
+                                    ,
                               ),
                               DropdownButtonFormField(
                                 key: _key,
@@ -106,6 +117,10 @@ class _CrearRecepcionFormState extends State<CrearRecepcionForm> {
                                 decoration: InputDecoration(
                                   labelText: 'Cantidad',
                                 ),
+                                keyboardType: TextInputType.number,
+                                inputFormatters: <TextInputFormatter>[
+                                  FilteringTextInputFormatter.digitsOnly
+                                ],
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'Por favor ingrese una cantidad';

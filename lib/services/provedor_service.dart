@@ -27,4 +27,18 @@ class ProvedorService {
       throw FetchDataException("Error desconocido");
     }
   }
+
+  Future<List<Provedor>> getProvedoresByName(String nombre) async {
+    final response = await http.get(Uri.parse(apiBaseUrl + "/prov/search/nombre/$nombre"));
+    if (response.statusCode == 200) {
+      final responseJson = json.decode(response.body);
+      List<Provedor> list = [];
+      for (var item in responseJson) {
+        list.add(Provedor.fromJson(item));
+      }
+      return list;
+    } else {
+      throw FetchDataException("Error desconocido");
+    }
+  }
 }

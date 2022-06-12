@@ -1,7 +1,10 @@
 import 'package:clawtech_logistica_app/models/producto.dart';
 import 'package:clawtech_logistica_app/view_model/crear_pedido_viewmodel.dart';
+import 'package:clawtech_logistica_app/view_model/events/crear_pedido_events.dart';
+import 'package:clawtech_logistica_app/views/widgets/card_general.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class AgregarProdoctosPedidoForm extends StatelessWidget {
   const AgregarProdoctosPedidoForm({
@@ -19,14 +22,15 @@ class AgregarProdoctosPedidoForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            Form(
-              key: _formKey,
-              child: Column(
+    return CardGeneral(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Form(
+                key: _formKey,
+                child: Column(
                   children: [
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
@@ -71,6 +75,9 @@ class AgregarProdoctosPedidoForm extends StatelessWidget {
                     TextFormField(
                       controller: _cantidadController,
                       keyboardType: TextInputType.number,
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.digitsOnly
+                      ],
                       decoration: InputDecoration(
                         labelText: 'Cantidad',
                       ),
@@ -104,8 +111,9 @@ class AgregarProdoctosPedidoForm extends StatelessWidget {
                         viewModel.state.cantidadPorProducto),
                   ],
                 ),
-            ),
-          ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -113,7 +121,7 @@ class AgregarProdoctosPedidoForm extends StatelessWidget {
 }
 
 DataTable _createPedidoProductsDataTable(
-  Map<Producto, int> productos,
+  Map<Producto, double> productos,
 ) {
   return DataTable(
       columns: _createPedidoProductsColumns(),
@@ -128,7 +136,7 @@ List<DataColumn> _createPedidoProductsColumns() {
   ];
 }
 
-List<DataRow> _createPedidoProductsRows(Map<Producto, int> productos) {
+List<DataRow> _createPedidoProductsRows(Map<Producto, double> productos) {
   List<DataRow> list = [];
 
   productos.forEach((producto, cantidad) => list.add(DataRow(

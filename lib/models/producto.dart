@@ -34,4 +34,9 @@ class Producto {
         "cantidadDisponible": cantidadDisponible,
         "cantidadReservada": cantidadReservada,
       };
+
+      @override
+      String toString() {
+        return 'Producto{id: $id, tipoProducto: $tipoProducto, cantidadDisponible: $cantidadDisponible, cantidadReservada: $cantidadReservada}';
+      }
 }

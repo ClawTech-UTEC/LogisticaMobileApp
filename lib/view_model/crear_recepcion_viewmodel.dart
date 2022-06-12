@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:clawtech_logistica_app/models/auth_data.dart';
 import 'package:clawtech_logistica_app/models/estado_recepcion.dart';
 import 'package:clawtech_logistica_app/models/producto.dart';
 import 'package:clawtech_logistica_app/models/provedor.dart';
@@ -10,6 +11,8 @@ import 'package:clawtech_logistica_app/models/usuario.dart';
 import 'package:clawtech_logistica_app/services/producto_service.dart';
 import 'package:clawtech_logistica_app/services/provedor_service.dart';
 import 'package:clawtech_logistica_app/services/recepcion_service.dart';
+import 'package:clawtech_logistica_app/view_model/events/crear_recepcion_events.dart';
+import 'package:clawtech_logistica_app/view_model/states/crear_recepcion_states.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -100,82 +103,17 @@ class CrearRecepcionViewModel
     state.recepcion.estadoRecepcion = [
       EstadoRecepcion(recepcion: state.recepcion, fecha: DateTime.now())
     ];
-    Recepcion recepcion = await recepcionService.createRec(state.recepcion);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    AuthJwtData authData =
+        AuthJwtData.fromJson(jsonDecode(prefs.getString("authData")!));
+
+    Usuario usuario =
+        Usuario(email: authData.email, idUsuario: authData.idUsuario);
+
+    Recepcion recepcion =
+        await recepcionService.createRec(state.recepcion, usuario);
 
     //TODO: controlar exepciones al crear una
     emit(CrearRecepcionRecepcionCreadaState(recepcion: recepcion));
   }
-}
-
-//TODO: simplificar el codigo
-abstract class CrearRecepcionEvent extends Equatable {}
-
-class AgregarProductoEvent extends CrearRecepcionEvent {
-  final TipoProducto producto;
-  final double cantidad;
-  AgregarProductoEvent(this.producto, this.cantidad);
-  List<Object> get props => [producto, cantidad];
-}
-
-class QuitarProductoEvent extends CrearRecepcionEvent {
-  List<Object> get props => [];
-}
-
-class ConfirmarRecepcionEvent extends CrearRecepcionEvent {
-  List<Object> get props => [];
-}
-
-class OnStartedEvent extends CrearRecepcionEvent {
-  List<Object> get props => [];
-}
-
-class OnCambiarProvedorEvent extends CrearRecepcionEvent {
-  final Provedor provedor;
-  OnCambiarProvedorEvent({required this.provedor});
-  List<Object> get props => [];
-}
-
-abstract class CrearRecepcionState {
-  CrearRecepcionState();
-  Recepcion recepcion = Recepcion();
-  List<TipoProducto> tipoProductos = [];
-  Map<TipoProducto, double> recepcionProductos = Map<TipoProducto, double>();
-  List<Provedor> provedores = [];
-  Provedor? selectedProvedor;
-}
-
-class CrearRecepcionInitialState extends CrearRecepcionState {
-  CrearRecepcionInitialState();
-}
-
-class CrearRecepcionLoadedState extends CrearRecepcionState {
-  List<TipoProducto> tipoProductos;
-  List<Provedor> provedores;
-  Recepcion recepcion;
-  Provedor? selectedProvedor;
-  Map<TipoProducto, double> recepcionProductos = Map<TipoProducto, double>();
-
-  CrearRecepcionLoadedState(
-      {required this.recepcion,
-      this.selectedProvedor,
-      required this.tipoProductos,
-      required this.recepcionProductos,
-      required this.provedores});
-}
-
-class CrearRecepcionErrorState extends CrearRecepcionState {
-  final String errorMessage;
-  List<TipoProducto> tipoProductos;
-  Map<TipoProducto, double> recepcionProductos = Map<TipoProducto, double>();
-  Recepcion recepcion;
-  CrearRecepcionErrorState(
-      {this.errorMessage = "",
-      this.tipoProductos = const [],
-      required this.recepcionProductos,
-      required this.recepcion});
-}
-
-class CrearRecepcionRecepcionCreadaState extends CrearRecepcionState {
-  Recepcion recepcion;
-  CrearRecepcionRecepcionCreadaState({required this.recepcion});
 }

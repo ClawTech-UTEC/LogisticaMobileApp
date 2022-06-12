@@ -27,4 +27,10 @@ class Distribuidor {
         "matricula": matricula,
         "chofer": chofer,
       };
+
+      @override
+  String toString() {
+    // TODO: implement toString
+    return 'Distribuidor{idDistribu: $idDistribu, vehiculo: $vehiculo, matricula: $matricula, chofer: $chofer}';
+  }
 }

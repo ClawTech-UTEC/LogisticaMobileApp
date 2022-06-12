@@ -58,6 +58,10 @@ class TipoProducto {
         .map<TipoProducto>((json) => TipoProducto.fromJson(json))
         .toList();
   }
-
+@override
+  String toString() {
+    // TODO: implement toString
+    return  'TipoProducto{idTipoProd: $idTipoProd, codigoDeBarras: $codigoDeBarras, nombre: $nombre, descripcion: $descripcion, neto: $neto, precio: $precio, categoria: $categoria, subCat: $subCat}';
+  }
   
 }

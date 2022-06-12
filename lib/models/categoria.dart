@@ -21,4 +21,10 @@ class Categoria {
         "idCat": idCat,
         "nombre": nombre,
       };
+
+      @override
+  String toString() {
+    // TODO: implement toString
+    return 'Categoria{idCat: $idCat, nombre: $nombre}';
+  }
 }

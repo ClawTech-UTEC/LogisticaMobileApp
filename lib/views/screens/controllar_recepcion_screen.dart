@@ -2,9 +2,16 @@ import 'package:clawtech_logistica_app/models/recepcion.dart';
 import 'package:clawtech_logistica_app/models/recepcion_producto.dart';
 import 'package:clawtech_logistica_app/view_model/authentication_viewmodel.dart';
 import 'package:clawtech_logistica_app/view_model/control_recepcion_viewmodel.dart';
+import 'package:clawtech_logistica_app/view_model/events/controlar_recepcion_events.dart';
+import 'package:clawtech_logistica_app/view_model/states/controlar_recepcion_states.dart';
+import 'package:clawtech_logistica_app/views/screens/home.dart';
 import 'package:clawtech_logistica_app/views/screens/loading_screen.dart';
+import 'package:clawtech_logistica_app/views/widgets/barcode_search_textform.dart';
+import 'package:clawtech_logistica_app/views/widgets/card_general.dart';
 import 'package:clawtech_logistica_app/views/widgets/scafold_general_background.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ControllarRecepcionScreen extends StatefulWidget {
@@ -18,31 +25,66 @@ class ControllarRecepcionScreen extends StatefulWidget {
 }
 
 class _ControllarRecepcionScreenState extends State<ControllarRecepcionScreen> {
+  ControlRecepcionViewModel viewModel = ControlRecepcionViewModel();
+  TextEditingController _searchController = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return ScaffoldGeneralBackground(
         title: "Controlar Recepción",
-        child: BlocBuilder(
-            bloc: ControlRecepcionViewModel()
-              ..add(ControlRecepcionEventLoaded(recepcion: widget.recepcion)),
-            builder: (context, ControlRecepcionState state) {
-              if (state.status == ControlRecepcionStateEnum.INITIAL) {
-                return LoadingPage();
-              }
+        child: BlocListener(
+          bloc: viewModel,
+          listener: (context, ControlRecepcionState state) {
+            if (state.status == ControlRecepcionStateEnum.ERROR) {
+              Scaffold.of(context).showSnackBar(
+                SnackBar(
+                  backgroundColor: Theme.of(context).accentColor,
+                  content: Text('${state.error}'),
+                ),
+              );
+            }
+            if (state.status == ControlRecepcionStateEnum.COMPLETED) {
+              Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                    builder: (BuildContext context) => HomePage()),
+              );
+            }
+          },
+          child: BlocBuilder(
+              bloc: viewModel
+                ..add(ControlRecepcionEventLoad(
+                  recepcion: widget.recepcion,
+                )),
+              builder: (context, ControlRecepcionState state) {
+                if (state.status == ControlRecepcionStateEnum.INITIAL) {
+                  return LoadingPage();
+                }
 
-              return Container(
-                width: MediaQuery.of(context).size.width,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                return CardGeneral(
                   child: Column(
                     children: [
-                      Card(
-                        child: Column(
-                          children: [
-                            _createControllRecepctionDataTable(
-                                state.cantidadRecividaPorProducto)
-                          ],
-                        ),
+                      BarcodeSearchTextFile(
+                          onChanged: (_) => {},
+                          searchController: _searchController,
+                          onScanCompleted: (String x) {
+                            viewModel.add((ControlRecepcionEventAddProducto(
+                              scannedProduct: x,
+                            )));
+                          },
+                          onSearch: () {
+                            viewModel.add((ControlRecepcionEventAddProducto(
+                              scannedProduct: _searchController.text,
+                            )));
+                          }),
+                      FittedBox(
+                        fit: BoxFit.fitWidth,
+                        child: _createControllRecepctionDataTable(
+                            state.recepcion!.productos, state.tableController),
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -52,7 +94,16 @@ class _ControllarRecepcionScreenState extends State<ControllarRecepcionScreen> {
                                 backgroundColor: MaterialStateProperty.all(
                               Theme.of(context).accentColor,
                             )),
-                            onPressed: (() => {}),
+                            onPressed: (() => {
+                                  confirmarcionDiolog(
+                                      onConfirm: () {
+                                        viewModel.add(
+                                            ControlRecepcionEventCompleted(
+                                                controlarDiferencias: true));
+                                      },
+                                      context: context,
+                                      title: "Aceptar la recepcion")
+                                }),
                             child: Text("Aceptar"),
                           ),
                           ElevatedButton(
@@ -60,25 +111,69 @@ class _ControllarRecepcionScreenState extends State<ControllarRecepcionScreen> {
                                 backgroundColor: MaterialStateProperty.all(
                               Theme.of(context).accentColor,
                             )),
-                            onPressed: (() => {}),
-                            child: Text("Aceptar Con Diferencias"),
-                          )
+                            onPressed: (() => {
+                                  confirmarcionDiolog(
+                                      onConfirm: () {
+                                        viewModel.add(
+                                            ControlRecepcionEventCompleted(
+                                                controlarDiferencias: false));
+                                      },
+                                      context: context,
+                                      title:
+                                          "Aceptar la recepcion con diferencias")
+                                }),
+                            child: Text("Aceptar con diferencias"),
+                          ),
                         ],
                       )
                     ],
                   ),
-                ),
-              );
-            }));
+                );
+              }),
+        ));
+  }
+
+  void confirmarcionDiolog(
+      {required BuildContext context,
+      required String title,
+      required VoidCallback onConfirm}) {
+    showDialog(
+        context: context,
+        builder: (BuildContext ctx) {
+          return AlertDialog(
+            title: const Text('Por favor confirmar'),
+            content: Text(title),
+            actions: [
+              // The "Yes" button
+              TextButton(
+                  onPressed: () {
+                    // Remove the box
+                    onConfirm();
+
+                    // Close the dialog
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Si')),
+              TextButton(
+                  onPressed: () {
+                    // Close the dialog
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('No'))
+            ],
+          );
+        });
   }
 }
 
 DataTable _createControllRecepctionDataTable(
-    Map<RecepcionProducto, int> productosCantidad) {
+    List<RecepcionProducto> productosCantidad,
+    List<TextEditingController> controllersCantidadIngresada) {
   return DataTable(
       columnSpacing: 40,
       columns: _controllRecepctionProductsColumns(),
-      rows: _controllRecepctionProductsRows(productosCantidad));
+      rows: _controllRecepctionProductsRows(
+          productosCantidad, controllersCantidadIngresada));
 }
 
 List<DataColumn> _controllRecepctionProductsColumns() {
@@ -90,14 +185,25 @@ List<DataColumn> _controllRecepctionProductsColumns() {
   ];
 }
 
-List<DataRow> _controllRecepctionProductsRows(
-    Map<RecepcionProducto, int> productos) {
-  return productos.entries.map((entry) {
+List<DataRow> _controllRecepctionProductsRows(List<RecepcionProducto> productos,
+    List<TextEditingController> controllersCantidadIngresada) {
+  TextEditingController _textEditing = TextEditingController();
+  return productos.map((entry) {
     return DataRow(cells: [
-      DataCell(Text('${entry.key.producto.nombre}')),
-      DataCell(Text('${entry.key.producto.codigoDeBarras}')),
-      DataCell(Text('${entry.key.cantidad}')),
-      DataCell(Text('${entry.value}'))
+      DataCell(Text('${entry.producto.nombre}')),
+      DataCell(Text('${entry.producto.codigoDeBarras}')),
+      DataCell(Text('${entry.cantidad}')),
+      DataCell(
+          TextFormField(
+            controller: controllersCantidadIngresada[productos.indexOf(entry)],
+            //  initialValue: '${entry.value}',
+            decoration: InputDecoration(),
+            keyboardType: TextInputType.number,
+            inputFormatters: <TextInputFormatter>[
+              FilteringTextInputFormatter.digitsOnly
+            ],
+          ),
+          showEditIcon: true)
     ]);
   }).toList();
 }

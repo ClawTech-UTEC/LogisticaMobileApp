@@ -33,4 +33,10 @@ class Provedor {
     "contacto": contacto,
     "email": email,
   };
+
+  @override
+  String toString() {
+    // TODO: implement toString
+    return 'Provedor{idProv: $idProv, nombreProv: $nombreProv, contacto: $contacto, email: $email}';
+  }
 }

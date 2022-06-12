@@ -1,24 +1,25 @@
+import 'package:clawtech_logistica_app/enums/tipo_usuarios.dart';
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 @JsonSerializable()
-
 class Usuario {
-  int idUsuario;
+  int? idUsuario;
   String? nombre;
   String? apellido;
   String? email;
   String? password;
   bool? active;
-
+  TipoUsuario? tipoUsuario;
 
   Usuario(
-      {required this.idUsuario,
-       this.nombre,
-       this.apellido,
-       this.email,
-       this.password,
-       this.active});
+      { this.idUsuario,
+      this.nombre,
+      this.apellido,
+      this.email,
+      this.password,
+      this.active,
+      this.tipoUsuario});
 
   factory Usuario.fromJson(Map<String, dynamic> json) => Usuario(
         idUsuario: json['idUsuario'],
@@ -27,6 +28,9 @@ class Usuario {
         email: json['email'],
         password: json['password'],
         active: json['active'],
+        tipoUsuario: json['tipoUsuario'] != null
+            ? TipoUsuario.values.byName(json['tipoUsuario'])
+            : null,
       );
 
   Map<String, dynamic> toJson() => {
@@ -36,5 +40,6 @@ class Usuario {
         'email': email,
         'password': password,
         'active': active,
+        'tipoUsuario': tipoUsuario != null ? tipoUsuario!.name : null,
       };
 }

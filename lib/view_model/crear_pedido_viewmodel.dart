@@ -1,17 +1,21 @@
 import 'dart:convert';
 
 import 'package:clawtech_logistica_app/enums/tipo_estado_pedido.dart';
+import 'package:clawtech_logistica_app/models/auth_data.dart';
 import 'package:clawtech_logistica_app/models/cliente.dart';
 import 'package:clawtech_logistica_app/models/distribuidor.dart';
 import 'package:clawtech_logistica_app/models/estado_pedido.dart';
+import 'package:clawtech_logistica_app/models/pedido_producto.dart';
 import 'package:clawtech_logistica_app/models/pedidos.dart';
 import 'package:clawtech_logistica_app/models/producto.dart';
 import 'package:clawtech_logistica_app/models/usuario.dart';
 import 'package:clawtech_logistica_app/services/cliente_service.dart';
 import 'package:clawtech_logistica_app/services/pedidos_service.dart';
-import 'package:clawtech_logistica_app/services/producto_service.dart';
 import 'package:clawtech_logistica_app/services/stock_service.dart';
+import 'package:clawtech_logistica_app/view_model/events/crear_pedido_events.dart';
+import 'package:clawtech_logistica_app/view_model/states/crear_pedido_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CrearPedidoViewModel extends Bloc<CrearPedidoEvent, CrearPedidoState> {
@@ -31,10 +35,7 @@ class CrearPedidoViewModel extends Bloc<CrearPedidoEvent, CrearPedidoState> {
     print("cargando crear pedidos page ");
     List<Cliente> clientes = await clienteService.getAllClientes();
     List<Producto> productos = await stockService.getProductosDisponibles();
-    Map<Producto, int> productosPedido = Map<Producto, int>();
-    // productos.forEach((producto) {
-    //   productosPedido[producto] = 0;
-    // });
+    Map<Producto, double> productosPedido = Map<Producto, double>();
     emit(state.copyWith(
         cantidadPorProducto: productosPedido,
         productos: productos,
@@ -51,8 +52,8 @@ class CrearPedidoViewModel extends Bloc<CrearPedidoEvent, CrearPedidoState> {
 
   void onAgregarProducto(
       CrearPedidoEventAgregarProducto event, Emitter<CrearPedidoState> emit) {
-    int cantidadInicial = state.cantidadPorProducto[event.producto] ?? 0;
-    int cantidadTotal = cantidadInicial + event.cantidad;
+    double cantidadInicial = state.cantidadPorProducto[event.producto] ?? 0;
+    double cantidadTotal = cantidadInicial + event.cantidad;
     if (cantidadTotal > event.producto.cantidadDisponible) {
       emit(state.copyWith(
           status: CrearPedidoStateEnum.ERROR,
@@ -73,106 +74,44 @@ class CrearPedidoViewModel extends Bloc<CrearPedidoEvent, CrearPedidoState> {
   void onConfirmarPedido(CrearPedidoEventConfirmarPedido event,
       Emitter<CrearPedidoState> emit) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    AuthJwtData authData =
+        AuthJwtData.fromJson(jsonDecode(prefs.getString("authData")!));
+
+    Usuario usuario =
+        Usuario(email: authData.email, idUsuario: authData.idUsuario);
 
     Pedido pedido = Pedido(
       direccion: state.cliente!.direccion,
       cliente: state.cliente!,
-      duracionEstimada: 0,
-      productos: [],
-      total: 0,
-      estadoPedido: EstadoPedido(
-          tipoEstadoPedido: TipoEstadoPedido.PENDIENTE,
-          usuarios: Usuario.fromJson(jsonDecode(prefs.getString("token")!)),
-          fechaPedido: DateTime.now()),
+      fechaPedido: DateTime.now(),
+      productos: List.generate(
+          state.cantidadPorProducto.length,
+          (index) => PedidoProducto(
+              producto:
+                  state.cantidadPorProducto.keys.elementAt(index).tipoProducto,
+              cantidad: state.cantidadPorProducto.values.elementAt(index))),
+      total: state.cantidadPorProducto.entries.fold(
+          0,
+          (previousValue, element) =>
+              (element.key.tipoProducto.precio * element.value) +
+              previousValue),
+      estadoPedido: [
+        EstadoPedido(
+            tipoEstadoPedido: TipoEstadoPedido.PENDIENTE,
+            usuario: usuario,
+            fecha: DateTime.now())
+      ],
     );
 
-    Pedido pedidoCreado = await pedidosService.createPedido(pedido);
-
-    print(pedidoCreado);
-    emit(state.copyWith(
-      status: CrearPedidoStateEnum.COMPLETED,
-    ));
-  }
-}
-
-enum CrearPedidoStateEnum { INITIAL, LOADED, ERROR, COMPLETED }
-
-abstract class CrearPedidoEvent {}
-
-class CrearPedidoEventLoad extends CrearPedidoEvent {
-  CrearPedidoEventLoad();
-}
-
-class CrearPedidoEventSeleccionarProducto extends CrearPedidoEvent {
-  final Producto producto;
-  CrearPedidoEventSeleccionarProducto({required this.producto});
-}
-
-class CrearPedidoEventAgregarProducto extends CrearPedidoEvent {
-  final Producto producto;
-  final int cantidad;
-  CrearPedidoEventAgregarProducto(
-      {required this.producto, required this.cantidad});
-}
-
-class CrearPedidoEventConfirmarPedido extends CrearPedidoEvent {
-  CrearPedidoEventConfirmarPedido();
-}
-
-//Termino de agregar productos, pasa a la pantalla de clientes
-class CrearPedidoEventConfirmarProductos extends CrearPedidoEvent {
-  CrearPedidoEventConfirmarProductos();
-}
-
-class CrearPedidoEventConfirmarCliente extends CrearPedidoEvent {
-  Cliente cliente;
-  CrearPedidoEventConfirmarCliente({required this.cliente});
-}
-
-class CrearPedidoState {
-  CrearPedidoStateEnum status;
-  Pedido? pedido;
-  List<Cliente> clientes;
-  List<Distribuidor> distribuidores;
-  List<Producto> productos;
-  Map<Producto, int> cantidadPorProducto = Map<Producto, int>();
-  Producto? productoSeleccionado;
-  String? error;
-  Cliente? cliente;
-
-  CrearPedidoState({
-    this.status = CrearPedidoStateEnum.INITIAL,
-    this.clientes = const [],
-    this.distribuidores = const [],
-    this.pedido,
-    this.cantidadPorProducto = const {},
-    this.productos = const [],
-    this.productoSeleccionado,
-    this.error,
-    this.cliente,
-  });
-
-  CrearPedidoState copyWith({
-    CrearPedidoStateEnum? status,
-    Pedido? pedido,
-    List<Cliente>? clientes,
-    List<Distribuidor>? distribuidores,
-    Map<Producto, int>? cantidadPorProducto,
-    List<Producto>? productos,
-    Producto? productoSeleccionado,
-    String? error,
-    Cliente? cliente,
-  }) {
-    return CrearPedidoState(
-      status: status ?? this.status,
-      pedido: pedido ?? this.pedido,
-      clientes: clientes ?? this.clientes,
-      distribuidores: distribuidores ?? this.distribuidores,
-      cantidadPorProducto: cantidadPorProducto ?? this.cantidadPorProducto,
-      productos: productos ?? this.productos,
-      productoSeleccionado: productoSeleccionado ?? this.productoSeleccionado,
-      error: error ?? this.error,
-      cliente: cliente ?? this.cliente,
-    );
+    try {
+      Pedido pedidoCreado = await pedidosService.createPedido(pedido);
+      emit(state.copyWith(
+        status: CrearPedidoStateEnum.COMPLETED,
+        pedido: pedidoCreado,
+      ));
+    } catch (e) {
+      emit(state.copyWith(
+          status: CrearPedidoStateEnum.ERROR, error: e.toString()));
+    }
   }
 }

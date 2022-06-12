@@ -1,6 +1,5 @@
-import 'dart:ffi';
 
-import 'package:clawtech_logistica_app/mockdata.dart';
+
 import 'package:clawtech_logistica_app/models/producto.dart';
 import 'package:clawtech_logistica_app/models/recepcion.dart';
 import 'package:clawtech_logistica_app/models/tipo_producto.dart';
@@ -38,4 +37,10 @@ class RecepcionProducto {
         "producto": producto,
         "cantidad": cantidad,
       };
+
+
+      @override
+      String toString() {
+        return 'RecepcionProducto{idRecepcionProducto: $idRecepcionProducto, recepcion: $recepcion, producto: $producto, cantidad: $cantidad}';
+      }
 }

@@ -18,4 +18,10 @@ class SubCategoria {
         "idSubCat": idSubCat,
         "nombre": nombre,
       };
+
+      @override
+  String toString() {
+    // TODO: implement toString
+    return 'SubCategoria{idSubCat: $idSubCat, nombre: $nombre}';
+  }
 }

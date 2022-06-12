@@ -1,4 +1,3 @@
-import 'dart:ffi';
 
 import 'package:clawtech_logistica_app/enums/tipo_estado_recepcion.dart';
 import 'package:clawtech_logistica_app/models/estado_recepcion.dart';
@@ -83,5 +82,10 @@ class Recepcion {
 
   TipoEstadoRecepcion get getEstadoActual {
     return estadoRecepcion.last.tipoEstado;
+  }
+
+  @override
+  String toString() {
+    return 'Recepcion{idRecepcion: $idRecepcion, fechaRecepcion: $fechaRecepcion, provedor: $provedor, productos: $productos, estadoRecepcion: $estadoRecepcion}';
   }
 }

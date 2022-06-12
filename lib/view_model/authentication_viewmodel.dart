@@ -1,132 +1,108 @@
 import 'dart:convert';
 
 import 'package:clawtech_logistica_app/apis/api_exeptions.dart';
+import 'package:clawtech_logistica_app/models/auth_data.dart';
 import 'package:clawtech_logistica_app/models/usuario.dart';
 import 'package:clawtech_logistica_app/services/user_service.dart';
+import 'package:clawtech_logistica_app/view_model/states/authentication_states.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthenticationViewModel extends Cubit<AuthenticationState> {
   AuthenticationViewModel({required UserService this.userService})
-      : super(InitialState());
+      : super(LoadingState());
   final UserService userService;
 
   void onLoginButtonPressed(String email, String password) async {
     print("onLoginButtonPressed");
+    emit(SignInState(loading: true));
     try {
-      Usuario usuario = await userService.getUser(email, password);
+      AuthJwtData authData = await userService.login(email, password);
       SharedPreferences prefs = await SharedPreferences.getInstance();
 
-      //todo: guardar token real de jtw
-      prefs.setString("token", jsonEncode(usuario));
+      prefs.setString("authData", jsonEncode(authData));
       emit(AuthenticationSuccessState());
     } catch (e) {
       if (e is UnauthorisedException) {
         print(e.message);
-        emit(SignInErrorState(e.message));
+        emit(SignInState(message: e.message));
       } else if (e is BadRequestException) {
         print(e.message);
-        emit(SignInErrorState(e.message));
+        emit(SignInState(message: e.message));
       } else if (e is FetchDataException) {
         print(e.message);
-        emit(SignInErrorState(e.message));
+        emit(SignInState(message: e.message));
       } else {
-        emit(SignInErrorState("Error al conectarte - Intentalo de nuevo"));
+        emit(SignInState(message: "Error de conexión"));
       }
     }
   }
 
   void initialAithentication() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    //todo: guardar token real de jtw
-    String? userToken = prefs.getString("token");
-    if (userToken != null) {
-      emit(AuthenticationSuccessState());
-    } else {
-      emit(SignInState());
+      AuthJwtData? authJwtData =
+          AuthJwtData.fromJson(jsonDecode(prefs.getString("authData")!));
+      if (authJwtData != null
+          ? !JwtDecoder.isExpired(authJwtData.jwt)
+          : false) {
+        emit(AuthenticationSuccessState());
+      } else {
+        emit(SignInState());
+      }
+    } catch (e) {
+      emit(SignInState(message: "Error de conexión"));
     }
   }
 
   void onGoToRegistrationButtomPressed() {
+    state.controller.animateToPage(
+      1,
+      duration: Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+    );
     emit(SignUpState());
   }
 
   void onGoToLoginButtomPressed() {
-    emit(InitialState());
+    state.controller.animateToPage(
+      0,
+      duration: Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+    );
+    emit(SignInState());
   }
 
   void registrarse(String email, String password, String repeatPassword,
       String nombre, String apellido) async {
+    emit(SignUpState(loading: true));
+
     try {
       Usuario user =
           await userService.createUser(email, password, nombre, apellido);
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      //todo: guardar token real de jtw
-      prefs.setString("token", jsonEncode(user));
-      emit(AuthenticationSuccessState());
+      state.controller.animateToPage(
+        0,
+        duration: Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
+      emit(SignInState(message: "Usuario creado correctamente"));
     } catch (e) {
       if (e is BadRequestException) {
         print(e.message);
-        emit(SignUpErrorState(message: e.message, emailRepetido: true));
+        emit(SignUpState(message: e.message, emailRepetido: true));
       } else {
-        emit(SignUpErrorState(
-            message: "Error al registrarte - Intentalo de nuevo"));
+        emit(SignUpState(message: "Error al registrarte - Intentalo de nuevo"));
       }
     }
   }
 
   void onSignOutButtonPressed() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.remove("token");
+    prefs.remove("authData");
     emit(SignInState());
   }
-}
-
-abstract class AuthenticationState extends Equatable {}
-
-class InitialState extends AuthenticationState {
-  @override
-  List<Object> get props => [];
-}
-
-class LoadingState extends AuthenticationState {
-  @override
-  List<Object> get props => [];
-}
-
-class AuthenticationSuccessState extends AuthenticationState {
-  AuthenticationSuccessState();
-  // Usuario usuario;
-
-  @override
-  List<Object> get props => [];
-}
-
-class SignInState extends AuthenticationState {
-  @override
-  List<Object> get props => [];
-}
-
-class SignUpState extends AuthenticationState {
-  @override
-  List<Object> get props => [];
-}
-
-class SignUpErrorState extends AuthenticationState {
-  SignUpErrorState({this.message = "", this.emailRepetido = false});
-  String message;
-  bool emailRepetido;
-
-  @override
-  List<Object> get props => [message, emailRepetido];
-}
-
-class SignInErrorState extends AuthenticationState {
-  SignInErrorState(this.message);
-  String message;
-  @override
-  List<Object> get props => [message];
 }

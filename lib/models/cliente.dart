@@ -41,6 +41,10 @@ class Cliente {
         "telefono": telefono,
       };
 
-
+@override
+  String toString() {
+    // TODO: implement toString
+    return 'Cliente{idCliente: $idCliente, nombre: $nombre, razonSocial: $razonSocial, documento: $documento, direccion: $direccion, ciudad: $ciudad, email: $email, telefono: $telefono}';
+  }
       
 }

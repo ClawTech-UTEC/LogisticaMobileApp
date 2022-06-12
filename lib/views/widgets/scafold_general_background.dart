@@ -1,4 +1,6 @@
 import 'package:clawtech_logistica_app/view_model/authentication_viewmodel.dart';
+import 'package:clawtech_logistica_app/views/screens/home.dart';
+import 'package:clawtech_logistica_app/views/screens/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -21,8 +23,10 @@ class _ScaffoldGeneralBackgroundState extends State<ScaffoldGeneralBackground> {
         elevation: 0,
         backgroundColor: Theme.of(context).backgroundColor,
         title: Center(
-            child: Text(widget.title,
-                style: Theme.of(context).textTheme.headlineSmall)),
+            child: FittedBox(
+                          fit: BoxFit.fitWidth,
+                          child: Text(widget.title,
+                style: Theme.of(context).textTheme.headlineSmall))),
         actions: [
           PopupMenuButton(itemBuilder: (context) {
             return [
@@ -35,6 +39,8 @@ class _ScaffoldGeneralBackgroundState extends State<ScaffoldGeneralBackground> {
             if (value == 0) {
               BlocProvider.of<AuthenticationViewModel>(context)
                   .onSignOutButtonPressed();
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => HomePage()));
             }
           }),
         ],

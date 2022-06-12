@@ -17,7 +17,6 @@ class EstadoRecepcion {
   TipoEstadoRecepcion tipoEstado;
 
   DateTime? fecha;
-  EstadoRecepcion? estadoAnterior;
 
   EstadoRecepcion({
     this.idEstadoRecepcion,
@@ -25,18 +24,20 @@ class EstadoRecepcion {
     this.usuario,
     this.tipoEstado = TipoEstadoRecepcion.PENDIENTE,
     required this.fecha,
-    this.estadoAnterior,
   });
 
   factory EstadoRecepcion.fromJson(Map<String, dynamic> json) =>
       EstadoRecepcion(
         idEstadoRecepcion: json["idEstadoRecepcion"],
-        recepcion: null,
-        usuario: null,
-        tipoEstado: TipoEstadoRecepcion.PENDIENTE,
-        fecha: null,
-        estadoAnterior: null,
-      );
+        recepcion: json["recepcion"] == null
+            ? null
+            : Recepcion.fromJson(json["recepcion"] as Map<String, dynamic>),
+        usuario: json["usuario"] == null
+            ? null
+            : Usuario.fromJson(json["usuario"] as Map<String, dynamic>),
+        tipoEstado: TipoEstadoRecepcion.values.byName(json["tipoEstado"]),
+        fecha: DateTime.parse(json["fecha"] as String),
+        );
 
   Map<String, dynamic> toJson() => {
         "idEstadoRecepcion": idEstadoRecepcion,
@@ -44,9 +45,12 @@ class EstadoRecepcion {
         "usuario": usuario,
         "tipoEstado": tipoEstado.name,
         "fecha": fecha?.toIso8601String(),
-        "estadoAnterior": null,
       };
 
 
-      
+      @override
+  String toString() {
+    // TODO: implement toString
+    return 'EstadoRecepcion{idEstadoRecepcion: $idEstadoRecepcion, recepcion: $recepcion, usuario: $usuario, tipoEstado: $tipoEstado, fecha: $fecha}';
+  }
 }

@@ -3,9 +3,13 @@ import 'package:clawtech_logistica_app/models/pedidos.dart';
 import 'package:clawtech_logistica_app/models/producto.dart';
 import 'package:clawtech_logistica_app/models/tipo_producto.dart';
 import 'package:clawtech_logistica_app/view_model/crear_pedido_viewmodel.dart';
+import 'package:clawtech_logistica_app/view_model/events/crear_pedido_events.dart';
+import 'package:clawtech_logistica_app/view_model/states/crear_pedido_state.dart';
+import 'package:clawtech_logistica_app/views/screens/detalles_pedido_screen.dart';
 import 'package:clawtech_logistica_app/views/screens/loading_screen.dart';
 import 'package:clawtech_logistica_app/views/widgets/agrega_cliente_pedido_form.dart';
 import 'package:clawtech_logistica_app/views/widgets/agregar_productos_pedido_form.dart';
+import 'package:clawtech_logistica_app/views/widgets/card_detalles_pedido.dart';
 import 'package:clawtech_logistica_app/views/widgets/finalizar_creacion_pedido.dart';
 import 'package:clawtech_logistica_app/views/widgets/scafold_general_background.dart';
 import 'package:flutter/cupertino.dart';
@@ -42,8 +46,7 @@ class _CrearPedidoScreenState extends State<CrearPedidoScreen> {
         title: "Crear Pedido",
         child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Card(
-                child: BlocListener(
+            child:  BlocListener(
                     bloc: viewModel,
                     listener: (BuildContext context, CrearPedidoState state) {
                       if (state.status == CrearPedidoStateEnum.ERROR) {
@@ -60,6 +63,12 @@ class _CrearPedidoScreenState extends State<CrearPedidoScreen> {
                         builder: (context, CrearPedidoState state) {
                           if (state.status == CrearPedidoStateEnum.INITIAL) {
                             return LoadingPage();
+                          }
+
+                          if (state.status == CrearPedidoStateEnum.COMPLETED) {
+                            return CardDetallePedido(
+                              pedido: state.pedido!,
+                            );
                           }
 
                           return Stepper(
@@ -93,15 +102,19 @@ class _CrearPedidoScreenState extends State<CrearPedidoScreen> {
                             },
                             onStepContinue: () {
                               if (_index == 0) {
+                                print(_index);
+
                                 _formProductosKey.currentState!.reset();
                                 setState(() {
                                   _index += 1;
                                 });
+                                return;
                               }
 
                               if (_index == 1) {
                                 if (_formClientesKey.currentState!.validate()) {
                                   _formClientesKey.currentState!.save();
+                                  print(_index);
                                   viewModel.add(
                                       CrearPedidoEventConfirmarCliente(
                                           cliente: _cliente));
@@ -110,12 +123,16 @@ class _CrearPedidoScreenState extends State<CrearPedidoScreen> {
                                     _index += 1;
                                   });
                                 }
+                                return;
                               }
 
                               if (_index == 2) {
+                                print(_index);
+
                                 viewModel
                                     .add(CrearPedidoEventConfirmarPedido());
                               }
+                              return;
                             },
                             // onStepTapped: (int index) {
                             //   print(index);
@@ -149,6 +166,6 @@ class _CrearPedidoScreenState extends State<CrearPedidoScreen> {
                                   )),
                             ],
                           );
-                        })))));
+                        }))));
   }
 }

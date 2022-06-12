@@ -1,6 +1,5 @@
 import 'dart:ffi';
 
-import 'package:clawtech_logistica_app/mockdata.dart';
 import 'package:clawtech_logistica_app/models/pedidos.dart';
 import 'package:clawtech_logistica_app/models/producto.dart';
 import 'package:clawtech_logistica_app/models/tipo_producto.dart';
@@ -24,7 +23,7 @@ class PedidoProducto {
   factory PedidoProducto.fromJson(Map<String, dynamic> json) => PedidoProducto(
         idPedidoProducto: json["idPedidoProducto"],
         producto: TipoProducto.fromJson(json["producto"]),
-        cantidad: json["cantidad"].toDouble(),
+        cantidad:  json["cantidad"]  ,
       );
 
   Map<String, dynamic> toJson() => {
@@ -32,4 +31,11 @@ class PedidoProducto {
         "producto": producto,
         "cantidad": cantidad,
       };
+
+
+      @override
+  String toString() {
+    // TODO: implement toString
+    return 'PedidoProducto{idPedidoProducto: $idPedidoProducto, producto: $producto, cantidad: $cantidad}';
+  }
 }
