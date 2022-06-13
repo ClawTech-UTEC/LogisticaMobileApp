@@ -1,13 +1,17 @@
 import 'package:clawtech_logistica_app/models/producto.dart';
+import 'package:clawtech_logistica_app/services/producto_service.dart';
+import 'package:clawtech_logistica_app/services/stock_service.dart';
 import 'package:clawtech_logistica_app/view_model/crear_pedido_viewmodel.dart';
 import 'package:clawtech_logistica_app/view_model/events/crear_pedido_events.dart';
 import 'package:clawtech_logistica_app/views/widgets/card_general.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class AgregarProdoctosPedidoForm extends StatelessWidget {
-  const AgregarProdoctosPedidoForm({
+class AgregarProductosPedidoForm extends StatelessWidget {
+  const AgregarProductosPedidoForm
+  ({
     Key? key,
     required GlobalKey<FormState> formKey,
     required this.viewModel,
@@ -22,10 +26,12 @@ class AgregarProdoctosPedidoForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CardGeneral(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: SingleChildScrollView(
+    return Container(
+     height: MediaQuery.of(context).size.height * 0.65,
+     width: double.maxFinite,
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
               Form(
@@ -39,24 +45,32 @@ class AgregarProdoctosPedidoForm extends StatelessWidget {
                           Container(
                             height: MediaQuery.of(context).size.height * 0.1,
                             width: MediaQuery.of(context).size.width * 0.6,
-                            child: DropdownButtonFormField(
-                              icon: Icon(Icons.arrow_drop_down),
+                            child: DropdownSearch<Producto>(
+                              // icon: Icon(Icons.arrow_drop_down),
+                              popupProps: PopupProps.menu(showSearchBox: true),
                               validator: (value) => value == null
                                   ? 'Debe seleccionar un Producto'
                                   : null,
-                              decoration: InputDecoration(
+                              dropdownSearchDecoration: InputDecoration(
                                 labelText: 'Producto',
                               ),
                               onChanged: (x) {
                                 viewModel.add(CrearPedidoEventSeleccionarProducto(
                                     producto: x as Producto));
                               },
-                              items: viewModel.state.productos
-                                  .map((producto) => DropdownMenuItem(
-                                        child: Text(producto.tipoProducto.nombre),
-                                        value: producto,
-                                      ))
-                                  .toList(),
+                              itemAsString: (item) => item.tipoProducto.nombre,
+                               asyncItems: (searchValue) async {
+                                return searchValue.isNotEmpty
+                                    ? await StockService()
+                                        .searchProductStockByNameOrCodigoDeBarras(searchValue, int.tryParse(searchValue))
+                                    : viewModel.state.productos;
+                              },
+                              // items: viewModel.state.productos
+                              //     .map((producto) => DropdownMenuItem(
+                              //           child: Text(producto.tipoProducto.nombre),
+                              //           value: producto,
+                              //         ))
+                              //     .toList(),
                             ),
                           ),
                           Center(

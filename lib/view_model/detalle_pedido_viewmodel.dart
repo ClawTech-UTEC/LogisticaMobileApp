@@ -10,8 +10,11 @@ class DetallePedidoViewModel
 
   onLoadPedido(
       LoadPedidoEvent event, Emitter<DetallePedidoState> emit) async {
-    emit(state.copyWith(
-        state: DetallePedidoStateEnum.loaded, pedido: event.pedido));
+    emit(state.copyWith( 
+        state: DetallePedidoStateEnum.loaded, pedido: event.pedido, 
+        
+        
+        ));
   }
 }
 

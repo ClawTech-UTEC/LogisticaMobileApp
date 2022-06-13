@@ -52,11 +52,12 @@ class CrearRecepcionViewModel
       OnCambiarProvedorEvent event, Emitter<CrearRecepcionState> emit) async {
     List<TipoProducto> tipoProductos =
         await productoService.getProductosByProvedor(event.provedor.idProv);
+    ;
     emit(CrearRecepcionLoadedState(
         selectedProvedor: event.provedor,
         tipoProductos: tipoProductos,
-        recepcion: state.recepcion,
-        recepcionProductos: state.recepcionProductos,
+        recepcion: Recepcion(),
+        recepcionProductos: {},
         provedores: state.provedores));
   }
 

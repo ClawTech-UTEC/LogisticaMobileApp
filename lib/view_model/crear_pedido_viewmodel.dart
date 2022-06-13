@@ -33,13 +33,16 @@ class CrearPedidoViewModel extends Bloc<CrearPedidoEvent, CrearPedidoState> {
   PedidosService pedidosService = PedidosService();
   void onLoad(CrearPedidoEvent event, Emitter<CrearPedidoState> emit) async {
     print("cargando crear pedidos page ");
-    List<Cliente> clientes = await clienteService.getAllClientes();
+    // List<Cliente> clientes = await clienteService.getAllClientes();
     List<Producto> productos = await stockService.getProductosDisponibles();
     Map<Producto, double> productosPedido = Map<Producto, double>();
+    Cliente cliente = Cliente();
     emit(state.copyWith(
         cantidadPorProducto: productosPedido,
         productos: productos,
-        clientes: clientes,
+        // clientes: clientes,
+        cliente : cliente,
+
         status: CrearPedidoStateEnum.LOADED));
   }
 
@@ -67,7 +70,7 @@ class CrearPedidoViewModel extends Bloc<CrearPedidoEvent, CrearPedidoState> {
   void onAgregarCliente(
       CrearPedidoEventConfirmarCliente event, Emitter<CrearPedidoState> emit) {
     emit(state.copyWith(
-      cliente: event.cliente,
+     
     ));
   }
 
@@ -103,15 +106,16 @@ class CrearPedidoViewModel extends Bloc<CrearPedidoEvent, CrearPedidoState> {
       ],
     );
 
-    try {
+    // try {
       Pedido pedidoCreado = await pedidosService.createPedido(pedido);
       emit(state.copyWith(
         status: CrearPedidoStateEnum.COMPLETED,
         pedido: pedidoCreado,
       ));
-    } catch (e) {
-      emit(state.copyWith(
-          status: CrearPedidoStateEnum.ERROR, error: e.toString()));
-    }
+    // } catch (e) {
+      // print(e);
+      // emit(state.copyWith(
+      //     status: CrearPedidoStateEnum.ERROR, error: e.toString()));
+    
   }
 }

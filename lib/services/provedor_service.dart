@@ -29,6 +29,7 @@ class ProvedorService {
   }
 
   Future<List<Provedor>> getProvedoresByName(String nombre) async {
+    print(nombre);
     final response = await http.get(Uri.parse(apiBaseUrl + "/prov/search/nombre/$nombre"));
     if (response.statusCode == 200) {
       final responseJson = json.decode(response.body);
