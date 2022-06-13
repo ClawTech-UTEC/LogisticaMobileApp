@@ -58,23 +58,24 @@ class _CrearRecepcionFormState extends State<CrearRecepcionForm> {
                           child: Column(
                             children: [
                               DropdownSearch<Provedor>(
-                                 popupProps: PopupProps.menu(
-                                  
-                      
+                                popupProps: PopupProps.menu(
+                                  showSearchBox: true
                                 ),
-                                
                                 validator: (value) => value == null
                                     ? 'Debe seleccionar un Provedor'
                                     : null,
                                 dropdownSearchDecoration: InputDecoration(
                                   labelText: 'Provedor',
                                 ),
-                                selectedItem: widget.viewModel.state.selectedProvedor,
+                                selectedItem:
+                                    widget.viewModel.state.selectedProvedor,
                                 itemAsString: (item) => item.nombreProv,
                                 asyncItems: (searchValue) async {
-                                  return await ProvedorService().getProvedoresByName(searchValue);
+                                  return searchValue.isNotEmpty
+                                      ? await ProvedorService()
+                                          .getProvedoresByName(searchValue)
+                                      : widget.provedores;
                                 },
-                                 
                                 onChanged: (x) {
                                   if (x ==
                                       widget.viewModel.state.selectedProvedor) {
@@ -85,13 +86,11 @@ class _CrearRecepcionFormState extends State<CrearRecepcionForm> {
                                     _formKey.currentState!.reset();
                                     _selectedProvedor = x as Provedor;
                                     _selectedTipoProducto = null;
-                                    
+
                                     widget.viewModel.add(OnCambiarProvedorEvent(
                                         provedor: _selectedProvedor!));
                                   }
                                 },
-                                items: widget.provedores
-                                    ,
                               ),
                               DropdownButtonFormField(
                                 key: _key,

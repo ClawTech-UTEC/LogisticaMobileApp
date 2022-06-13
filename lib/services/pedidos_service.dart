@@ -57,9 +57,9 @@ class PedidosService {
         'Content-Type': 'application/json; charset=UTF-8',
       },
     );
-    print("-------------------------");
+    print("--------BODY-----------------");
     print(response.body);
-    print("-------------------------");
+    print("--------STATUS---------------");
 
     print(response.statusCode);
     print("-------------------------");
@@ -69,16 +69,29 @@ class PedidosService {
       throw BadRequestException("Error al crear el pedido, revisa los datos ingresados");
     }
   }
+Future<Pedido> prepararPedido(
+      int idPedido, Map<String, String> productos, int idUsuaurio) async {
+    final http.Response response = await http.put(
+      Uri.parse(
+          apiBaseUrl + '/pedidos/preparar/$idPedido/?idUsuario=$idUsuaurio'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+    if (response.statusCode == 200) {
+      return Pedido.fromJson(json.decode(response.body));
+    }
 
+    if (response.statusCode == 400) {
+      throw BadRequestException(response.body.toString());
+    } else {
+      throw Exception('Failed');
+    }
+  }
   Future<Pedido> controlarPedido(int idPedido, Map<String, String> productos, int idUsuaurio) async {
 
-     final http.Response response = await http.post(
-      Uri.parse(apiBaseUrl + '/controlarPedido/'),
-      body: jsonEncode({
-        "idRecepcion": idPedido,
-        "productosRecibidos": productos,
-        "idUsuario": idUsuaurio,
-      }),
+     final http.Response response = await http.put(
+      Uri.parse(apiBaseUrl + '/pedidos/controlar/$idPedido/?idUsuario=$idUsuaurio'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

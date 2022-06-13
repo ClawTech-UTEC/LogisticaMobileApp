@@ -91,7 +91,7 @@ class PrepararPedidoViewModel
           cantidades[productos.indexOf(element)].toString();
     }
     try {
-      await _pedidosService.controlarPedido(
+      await _pedidosService.prepararPedido(
         state.pedido!.idPedido!,
         cantidadRecibidaPorProducto,
         usuario.idUsuario!,

@@ -1,3 +1,4 @@
+import 'package:clawtech_logistica_app/apis/api_exeptions.dart';
 import 'package:clawtech_logistica_app/constants.dart';
 import 'package:clawtech_logistica_app/models/producto.dart';
 import 'package:clawtech_logistica_app/models/tipo_producto.dart';
@@ -72,5 +73,43 @@ class ProductoService {
     }
   }
 
- 
+  Future<List<TipoProducto>> searchProductStockByNameOrCodigoDeBarras(
+     { String? nombre, int? codigoDeBarras}) async {
+    print(nombre);
+    final response = await http.get(
+      Uri.parse(apiBaseUrl +
+          "/tipoProductos/search/?nombre=$nombre&codigoDeBarras=$codigoDeBarras"),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+    );
+    if (response.statusCode == 200) {
+      final responseJson = json.decode(response.body);
+      List<TipoProducto> list = [];
+      for (var item in responseJson) {
+        list.add(TipoProducto.fromJson(item));
+      }
+      return list;
+    } else {
+      throw FetchDataException("Error desconocido");
+    }
+  }
+
+  Future<TipoProducto> searchTipoProductoByCodigoDeBarras(
+      int codigoDeBarras) async {
+    final response = await http.get(
+      Uri.parse(apiBaseUrl + "tipoProductos/cb/$codigoDeBarras"),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+    );
+    if (response.statusCode == 200) {
+      final responseJson = json.decode(response.body);
+      return TipoProducto.fromJson(responseJson);
+    } else {
+      throw FetchDataException("Error desconocido");
+    }
+  }
 }

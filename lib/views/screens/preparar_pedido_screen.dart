@@ -2,7 +2,6 @@ import 'package:clawtech_logistica_app/models/pedido_producto.dart';
 import 'package:clawtech_logistica_app/models/pedidos.dart';
 import 'package:clawtech_logistica_app/view_model/events/preparar_pedido_events.dart';
 import 'package:clawtech_logistica_app/view_model/preparar_pedido_viewmode.dart';
-import 'package:clawtech_logistica_app/view_model/states/controlar_recepcion_states.dart';
 import 'package:clawtech_logistica_app/view_model/states/preparar_pedido_state.dart';
 import 'package:clawtech_logistica_app/views/screens/home.dart';
 import 'package:clawtech_logistica_app/views/screens/loading_screen.dart';
@@ -28,7 +27,7 @@ class _PrepararPedidoScreenState extends State<PrepararPedidoScreen> {
   @override
   Widget build(BuildContext context) {
     return ScaffoldGeneralBackground(
-        title: "Controlar Recepción",
+        title: "Preparar Pedido",
         child: BlocListener(
           bloc: viewModel,
           listener: (context, PrepararPedidoState state) {
@@ -97,7 +96,7 @@ class _PrepararPedidoScreenState extends State<PrepararPedidoScreen> {
                                                   ));
                                         },
                                         context: context,
-                                        title: "Aceptar la recepcion")
+                                        title: "Confirma preparar el pedido")
                                   }),
                               child: Text("Aceptar"),
                             ),

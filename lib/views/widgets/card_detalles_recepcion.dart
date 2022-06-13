@@ -58,8 +58,6 @@ class _CardDetallesRecepcionState extends State<CardDetallesRecepcion> {
                   Center(
                     child: FittedBox(
                         fit: BoxFit.fitWidth,
-                        // width: MediaQuery.of(context).size.width * 1,
-                        // height: MediaQuery.of(context).size.height * 0.3,
                         child: _createRecepctionProductsDataTable(
                             widget.recepcion.productos)),
                   ),
@@ -70,8 +68,6 @@ class _CardDetallesRecepcionState extends State<CardDetallesRecepcion> {
                       child: FittedBox(
                           fit: BoxFit.fitWidth,
                           child: DataTable(
-                            // headingTextStyle: Theme.of(context).textTheme.titleSmall,
-                            // dataTextStyle: Theme.of(context).textTheme.bodySmall,
                             horizontalMargin: 12,
                             columns: [
                               DataColumn(

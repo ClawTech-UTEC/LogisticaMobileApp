@@ -6,7 +6,7 @@ class EstadoPedido {
   int? idEstadoPedido;
 
 
-  DateTime fecha;
+  DateTime? fecha;
 
   Usuario usuario;
 
@@ -15,22 +15,21 @@ class EstadoPedido {
 
   EstadoPedido({
     this.idEstadoPedido,
-    required this.fecha,
+     this.fecha,
     required this.usuario,
     required this.tipoEstadoPedido,
   });
 
   factory EstadoPedido.fromJson(Map<String, dynamic> json) => EstadoPedido(
         idEstadoPedido: json["idEstadoPedido"],
-       
-        fecha: DateTime.parse(json["fecha"]),
+        fecha: json["fecha"] == null ? null : DateTime.parse(json["fecha"]),
         usuario: Usuario.fromJson(json["usuario"]),
         tipoEstadoPedido: TipoEstadoPedido.values.byName(json["tipoEstadoPedido"]),
       );
 
   Map<String, dynamic> toJson() => {
         "idEstadoPedido": idEstadoPedido,
-        "fecha": fecha.toIso8601String(),
+        "fecha":  fecha == null ? null : fecha!.toIso8601String(),
         "usuario": usuario.toJson(),
         "tipoEstadoPedido": tipoEstadoPedido.name,
       };

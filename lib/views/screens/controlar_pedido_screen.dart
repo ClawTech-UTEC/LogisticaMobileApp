@@ -5,7 +5,6 @@ import 'package:clawtech_logistica_app/view_model/events/controlar_pedido_events
 import 'package:clawtech_logistica_app/view_model/events/preparar_pedido_events.dart';
 import 'package:clawtech_logistica_app/view_model/preparar_pedido_viewmode.dart';
 import 'package:clawtech_logistica_app/view_model/states/controlar_pedido_state.dart';
-import 'package:clawtech_logistica_app/view_model/states/controlar_recepcion_states.dart';
 import 'package:clawtech_logistica_app/view_model/states/preparar_pedido_state.dart';
 import 'package:clawtech_logistica_app/views/screens/home.dart';
 import 'package:clawtech_logistica_app/views/screens/loading_screen.dart';
@@ -31,7 +30,7 @@ class _ControlarPedidoScreenState extends State<ControlarPedidoScreen> {
   @override
   Widget build(BuildContext context) {
     return ScaffoldGeneralBackground(
-        title: "Controlar Recepción",
+        title: "Controlar Pedido",
         child: BlocListener(
           bloc: viewModel,
           listener: (context, ControlarPedidoState state) {
@@ -70,13 +69,15 @@ class _ControlarPedidoScreenState extends State<ControlarPedidoScreen> {
                             onChanged: (_) => {},
                             searchController: _searchController,
                             onScanCompleted: (String x) {
-                              viewModel.add((ControlarPedidoEventAgregarProducto(
-                                 x,
+                              viewModel
+                                  .add((ControlarPedidoEventAgregarProducto(
+                                x,
                               )));
                             },
                             onSearch: () {
-                              viewModel.add((ControlarPedidoEventAgregarProducto(
-                               _searchController.text,
+                              viewModel
+                                  .add((ControlarPedidoEventAgregarProducto(
+                                _searchController.text,
                               )));
                             }),
                         FittedBox(
@@ -96,15 +97,13 @@ class _ControlarPedidoScreenState extends State<ControlarPedidoScreen> {
                                     confirmarcionDiolog(
                                         onConfirm: () {
                                           viewModel.add(
-                                              ControlarPedidoEventConfirmarPedido(
-                                                  ));
+                                              ControlarPedidoEventConfirmarPedido());
                                         },
                                         context: context,
-                                        title: "Aceptar la recepcion")
+                                        title: "Aceptar el pedido")
                                   }),
                               child: Text("Aceptar"),
                             ),
-                            
                           ],
                         )
                       ],

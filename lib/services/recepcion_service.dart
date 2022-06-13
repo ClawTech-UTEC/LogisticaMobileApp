@@ -56,7 +56,7 @@ class RecepcionService {
 
   Future<Recepcion> cancelarRecepcion(int idRecepcion, int idUsuario) async {
     final response = await http.put(
-      Uri.parse(apiBaseUrl + '/cancelarRecepcion'),
+      Uri.parse(apiBaseUrl + '/recepcion/cancelar'),
       body: jsonEncode({
         'idRecepcion': idRecepcion,
         'idUsuario': idUsuario,
@@ -77,12 +77,9 @@ class RecepcionService {
       Map<String, String> productos,
       int idUsuaurio,
       bool controlarDiferencias) async {
-    print(idRecepcion);
-    print(idUsuaurio);
-    print(productos);
 
     final http.Response response = await http.post(
-      Uri.parse(apiBaseUrl + '/controlarRecepcion/'),
+      Uri.parse(apiBaseUrl + '/recepcion/controlar'),
       body: jsonEncode({
         "idRecepcion": idRecepcion,
         "productosRecibidos": productos,
