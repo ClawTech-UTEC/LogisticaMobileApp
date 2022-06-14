@@ -35,7 +35,7 @@ class UserService {
       AuthJwtData loginResponseJson =
           AuthJwtData.fromJson(json.decode(response.body));
       return loginResponseJson;
-    } else if (response.statusCode == 403) {
+    } else if (response.statusCode == 401) {
       throw UnauthorisedException("Email o password incorrectos");
     } else if (response.statusCode == 500) {
       throw FetchDataException("No se pudo conectar con el servidor");

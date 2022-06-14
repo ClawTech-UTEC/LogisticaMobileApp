@@ -3,8 +3,10 @@ import 'package:clawtech_logistica_app/models/pedido_producto.dart';
 import 'package:clawtech_logistica_app/models/pedidos.dart';
 import 'package:clawtech_logistica_app/views/screens/controlar_pedido_screen.dart';
 import 'package:clawtech_logistica_app/views/screens/dashboard.dart';
+import 'package:clawtech_logistica_app/views/screens/despachar_pedido_screen.dart';
 import 'package:clawtech_logistica_app/views/screens/preparar_pedido_screen.dart';
 import 'package:clawtech_logistica_app/views/widgets/card_general.dart';
+import 'package:clawtech_logistica_app/views/widgets/tabla_detalle_pedido.dart';
 import 'package:flutter/material.dart';
 
 class CardDetallePedido extends StatefulWidget {
@@ -26,7 +28,7 @@ class _CardDetallePedidoState extends State<CardDetallePedido> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Recepcion: ${widget.pedido.idPedido}',
+                'Pedido: ${widget.pedido.idPedido}',
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               BarcodeWidget(
@@ -43,7 +45,7 @@ class _CardDetallePedidoState extends State<CardDetallePedido> {
           Text('Productos: ', style: Theme.of(context).textTheme.titleMedium),
           FittedBox(
               fit: BoxFit.fitWidth,
-              child: _createPedidoProductsDataTable(widget.pedido.productos)),
+              child: TablaDetallePedido(pedido: widget.pedido)),
           Divider(
             thickness: 1,
           ),
@@ -80,8 +82,8 @@ class _CardDetallePedidoState extends State<CardDetallePedido> {
                               DashboardPage())); // Navigator.push(
                   //     context,
                   //     MaterialPageRoute(
-                  //         builder: (context) => ControllarRecepcionScreen(
-                  //               recepcion: widget.recepcion,
+                  //         builder: (context) => ControllarPedidoScreen(
+                  //               Pedido: widget.Pedido,
                   //             )));
                 },
               ),
@@ -118,7 +120,7 @@ class _CardDetallePedidoState extends State<CardDetallePedido> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => DashboardPage()));
+                                builder: (context) => DespacharPedidoScren(pedido: widget.pedido,)));
                       },
                     )
                   : Container(),
@@ -156,30 +158,4 @@ class _CardDetallePedidoState extends State<CardDetallePedido> {
       ),
     );
   }
-}
-
-DataTable _createPedidoProductsDataTable(List<PedidoProducto> productos) {
-  return DataTable(
-      columns: _createRecepctionProductsColumns(),
-      rows: _createRecepctionProductsRows(productos));
-}
-
-List<DataColumn> _createRecepctionProductsColumns() {
-  return [
-    DataColumn(label: Text('Producto')),
-    DataColumn(label: Text('Cantidad')),
-    DataColumn(label: Text('Precio'))
-  ];
-}
-
-List<DataRow> _createRecepctionProductsRows(List<PedidoProducto> productos) {
-  return productos.map((producto) => _createRow(producto)).toList();
-}
-
-DataRow _createRow(PedidoProducto producto) {
-  return DataRow(cells: [
-    DataCell(Text(producto.producto.nombre)),
-    DataCell(Text('${producto.cantidad}')),
-    DataCell(Text('\$${producto.producto.precio}'))
-  ]);
 }

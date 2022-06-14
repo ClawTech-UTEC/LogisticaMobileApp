@@ -1,5 +1,6 @@
 import 'package:clawtech_logistica_app/models/pedido_producto.dart';
 import 'package:clawtech_logistica_app/models/pedidos.dart';
+import 'package:clawtech_logistica_app/utils/confirmation_diolog.dart';
 import 'package:clawtech_logistica_app/view_model/events/preparar_pedido_events.dart';
 import 'package:clawtech_logistica_app/view_model/preparar_pedido_viewmode.dart';
 import 'package:clawtech_logistica_app/view_model/states/preparar_pedido_state.dart';
@@ -67,12 +68,12 @@ class _PrepararPedidoScreenState extends State<PrepararPedidoScreen> {
                             searchController: _searchController,
                             onScanCompleted: (String x) {
                               viewModel.add((PrepararPedidoEventAgregarProducto(
-                                 x,
+                                x,
                               )));
                             },
                             onSearch: () {
                               viewModel.add((PrepararPedidoEventAgregarProducto(
-                               _searchController.text,
+                                _searchController.text,
                               )));
                             }),
                         FittedBox(
@@ -92,15 +93,13 @@ class _PrepararPedidoScreenState extends State<PrepararPedidoScreen> {
                                     confirmarcionDiolog(
                                         onConfirm: () {
                                           viewModel.add(
-                                              PrepararPedidoEventConfirmarPedido(
-                                                  ));
+                                              PrepararPedidoEventConfirmarPedido());
                                         },
                                         context: context,
                                         title: "Confirma preparar el pedido")
                                   }),
                               child: Text("Aceptar"),
                             ),
-                            
                           ],
                         )
                       ],
@@ -109,38 +108,6 @@ class _PrepararPedidoScreenState extends State<PrepararPedidoScreen> {
                 );
               }),
         ));
-  }
-
-  void confirmarcionDiolog(
-      {required BuildContext context,
-      required String title,
-      required VoidCallback onConfirm}) {
-    showDialog(
-        context: context,
-        builder: (BuildContext ctx) {
-          return AlertDialog(
-            title: const Text('Por favor confirmar'),
-            content: Text(title),
-            actions: [
-              // The "Yes" button
-              TextButton(
-                  onPressed: () {
-                    // Remove the box
-                    onConfirm();
-
-                    // Close the dialog
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('Si')),
-              TextButton(
-                  onPressed: () {
-                    // Close the dialog
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('No'))
-            ],
-          );
-        });
   }
 }
 

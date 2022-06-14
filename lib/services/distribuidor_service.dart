@@ -10,7 +10,7 @@ class DistribuidoresService {
   DistribuidoresService.internal();
 
   Future<List<Distribuidor>> getDistribuidores() async {
-    final response = await http.post(Uri.parse(apiBaseUrl + '/dist'));
+    final response = await http.get(Uri.parse(apiBaseUrl + '/dist'));
     if (response.statusCode == 200) {
       final parsed = json.decode(response.body).cast<Map<String, dynamic>>();
       return parsed
