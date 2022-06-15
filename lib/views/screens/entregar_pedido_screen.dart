@@ -1,57 +1,52 @@
 import 'package:barcode_widget/barcode_widget.dart';
-import 'package:clawtech_logistica_app/models/distribuidor.dart';
-import 'package:clawtech_logistica_app/models/pedido_producto.dart';
 import 'package:clawtech_logistica_app/models/pedidos.dart';
-import 'package:clawtech_logistica_app/services/distribuidor_service.dart';
 import 'package:clawtech_logistica_app/utils/confirmation_diolog.dart';
-import 'package:clawtech_logistica_app/view_model/despachar_pedido_viewmode.dart';
-import 'package:clawtech_logistica_app/view_model/events/despachar_pedido_events.dart';
-import 'package:clawtech_logistica_app/view_model/states/despachar_pedido_state.dart';
-import 'package:clawtech_logistica_app/views/screens/dashboard.dart';
+import 'package:clawtech_logistica_app/view_model/entregar_pedido_viewmode.dart';
+import 'package:clawtech_logistica_app/view_model/events/entregar_pedido_events.dart';
+import 'package:clawtech_logistica_app/view_model/states/entregar_pedido_state.dart';
+
 import 'package:clawtech_logistica_app/views/screens/home.dart';
 import 'package:clawtech_logistica_app/views/screens/loading_screen.dart';
 import 'package:clawtech_logistica_app/views/widgets/card_general.dart';
 import 'package:clawtech_logistica_app/views/widgets/scafold_general_background.dart';
 import 'package:clawtech_logistica_app/views/widgets/tabla_detalle_pedido.dart';
-import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class DespacharPedidoScren extends StatefulWidget {
-  DespacharPedidoScren({Key? key, required this.pedido}) : super(key: key);
+class EntregarPedidoScren extends StatefulWidget {
+  EntregarPedidoScren({Key? key, required this.pedido}) : super(key: key);
   Pedido pedido;
 
   @override
-  State<DespacharPedidoScren> createState() => _DespacharPedidoScrenState();
+  State<EntregarPedidoScren> createState() => _EntregarPedidoScrenState();
 }
 
-class _DespacharPedidoScrenState extends State<DespacharPedidoScren> {
-  final DespacharPedidoViewModel viewModel = DespacharPedidoViewModel();
-  Distribuidor? _selectedDistribuidor;
+class _EntregarPedidoScrenState extends State<EntregarPedidoScren> {
+  final EntregarPedidoViewModel viewModel = EntregarPedidoViewModel();
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    // viewModel.add(DespacharPedidoEventLoad(widget.pedido));
+    // viewModel.add(EntregarPedidoEventLoad(widget.pedido));
   }
 
   @override
   Widget build(BuildContext context) {
     return ScaffoldGeneralBackground(
-      title: 'Despachar Pedido',
+      title: 'Entregar Pedido',
       child: BlocListener(
           bloc: viewModel,
-          listener: (BuildContext context, DespacharPedidoState state) {
+          listener: (BuildContext context, EntregarPedidoState state) {
             print(state.status.name);
 
-            if (state.status == DespacharPedidoStateEnum.ERROR) {
+            if (state.status == EntregarPedidoStateEnum.ERROR) {
               Scaffold.of(context).showSnackBar(
                 SnackBar(
                   backgroundColor: Theme.of(context).accentColor,
                   content: Text('${state.error}'),
                 ),
               );}
-              if (state.status == DespacharPedidoStateEnum.COMPLETED) {
+              if (state.status == EntregarPedidoStateEnum.COMPLETED) {
                 print(true);
 
                 Navigator.push(
@@ -63,9 +58,9 @@ class _DespacharPedidoScrenState extends State<DespacharPedidoScren> {
             
           },
           child: BlocBuilder(
-              bloc: viewModel..add(DespacharPedidoEventLoad(widget.pedido)),
-              builder: (context, DespacharPedidoState state) => state.status ==
-                      DespacharPedidoStateEnum.LOADED
+              bloc: viewModel..add(EntregarPedidoEventLoad(widget.pedido)),
+              builder: (context, EntregarPedidoState state) => state.status ==
+                      EntregarPedidoStateEnum.LOADED
                   ? CardGeneral(
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -119,40 +114,22 @@ class _DespacharPedidoScrenState extends State<DespacharPedidoScren> {
                                   ])
                                 ],
                               )),
-                          DropdownSearch<Distribuidor>(
-                            popupProps: PopupProps.menu(showSearchBox: true),
-                            validator: (value) => value == null
-                                ? 'Debe seleccionar un Distribuidor'
-                                : null,
-                            dropdownSearchDecoration: InputDecoration(
-                              labelText: 'Distribuidor',
-                            ),
-                            selectedItem: _selectedDistribuidor,
-                            itemAsString: (item) => item.chofer,
-                            asyncItems: (searchValue) async {
-                              return await DistribuidoresService()
-                                  .getDistribuidores();
-                            },
-                            onChanged: (item) {
-                              _selectedDistribuidor = item;
-                            },
-                          ),
+                          
                           Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 ElevatedButton(
                                     child: Text('Aceptar'),
                                     onPressed: () {
-                                      _selectedDistribuidor != null
-                                          ? confirmarcionDiolog(
+                                          confirmarcionDiolog(
                                               context: context,
                                               title: 'Confirmar Despacho',
                                               onConfirm: () {
                                                 viewModel.add(
-                                                    DespacharPedidoEventConfirmarPedido(
-                                                        _selectedDistribuidor!));
+                                                    EntregarPedidoEventConfirmarPedido(
+                                               ));
                                               })
-                                          : null;
+                                          
                                       ;
                                     })
                               ])

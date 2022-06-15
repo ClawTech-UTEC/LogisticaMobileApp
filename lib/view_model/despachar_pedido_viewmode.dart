@@ -6,10 +6,8 @@ import 'package:clawtech_logistica_app/models/auth_data.dart';
 import 'package:clawtech_logistica_app/models/pedido_producto.dart';
 import 'package:clawtech_logistica_app/models/usuario.dart';
 import 'package:clawtech_logistica_app/services/pedidos_service.dart';
-import 'package:clawtech_logistica_app/view_model/events/Despachar_pedido_events.dart';
-import 'package:clawtech_logistica_app/view_model/events/preparar_pedido_events.dart';
-import 'package:clawtech_logistica_app/view_model/states/Despachar_pedido_state.dart';
-import 'package:clawtech_logistica_app/view_model/states/preparar_pedido_state.dart';
+import 'package:clawtech_logistica_app/view_model/events/despachar_pedido_events.dart';
+import 'package:clawtech_logistica_app/view_model/states/despachar_pedido_state.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -28,7 +26,7 @@ class DespacharPedidoViewModel
       DespacharPedidoEventLoad event, Emitter<DespacharPedidoState> emit) {
     emit(state.copyWith(
       status: DespacharPedidoStateEnum.LOADED,
-      pedido: event.pedido,
+      pedido: event.pedido,   
     ));
   }
 

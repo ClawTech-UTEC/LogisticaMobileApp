@@ -4,6 +4,7 @@ import 'package:clawtech_logistica_app/models/pedidos.dart';
 import 'package:clawtech_logistica_app/views/screens/controlar_pedido_screen.dart';
 import 'package:clawtech_logistica_app/views/screens/dashboard.dart';
 import 'package:clawtech_logistica_app/views/screens/despachar_pedido_screen.dart';
+import 'package:clawtech_logistica_app/views/screens/entregar_pedido_screen.dart';
 import 'package:clawtech_logistica_app/views/screens/preparar_pedido_screen.dart';
 import 'package:clawtech_logistica_app/views/widgets/card_general.dart';
 import 'package:clawtech_logistica_app/views/widgets/tabla_detalle_pedido.dart';
@@ -131,7 +132,8 @@ class _CardDetallePedidoState extends State<CardDetallePedido> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => DashboardPage()));
+                                builder: (context) => EntregarPedidoScren(
+                                    pedido: widget.pedido)));
                       },
                     )
                   : Container(),

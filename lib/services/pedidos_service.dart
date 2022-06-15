@@ -116,6 +116,33 @@ Future<Pedido> prepararPedido(
         'Content-Type': 'application/json; charset=UTF-8',
       },
     );
+
+    print(response.body);
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      return Pedido.fromJson(json.decode(response.body));
+    }
+
+    if (response.statusCode == 400) {
+      throw BadRequestException(response.body.toString());
+    } else {
+      throw Exception('Failed');
+    }
+  }
+
+
+  Future<Pedido> entregarPedido(
+      int idPedido,  int idUsuaurio) async {
+    final http.Response response = await http.put(
+      Uri.parse(
+          apiBaseUrl + '/pedidos/entregar/$idPedido/?idUsuario=$idUsuaurio'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+
+    print(response.body);
+    print(response.statusCode);
     if (response.statusCode == 200) {
       return Pedido.fromJson(json.decode(response.body));
     }
