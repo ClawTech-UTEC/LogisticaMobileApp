@@ -1,3 +1,4 @@
+import 'package:clawtech_logistica_app/models/usuario.dart';
 import 'package:flutter/cupertino.dart';
 
 abstract class AuthenticationState {
@@ -5,6 +6,7 @@ abstract class AuthenticationState {
   PageController controller = PageController();
     bool loading = false;
   bool emailRepetido = false;
+  Usuario? usuario;
 
 }
 
@@ -12,9 +14,10 @@ class LoadingState extends AuthenticationState {}
 
 class AuthenticationSuccessState extends AuthenticationState {
 
-AuthenticationSuccessState({this.message , this.loading = false});
+AuthenticationSuccessState({this.message , this.loading = false, this.usuario});
   String? message;
   bool loading;
+  Usuario? usuario;
 }
 
 class SignInState extends AuthenticationState {

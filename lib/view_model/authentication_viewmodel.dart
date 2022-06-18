@@ -15,6 +15,7 @@ class AuthenticationViewModel extends Cubit<AuthenticationState> {
   AuthenticationViewModel({required UserService this.userService})
       : super(LoadingState());
   final UserService userService;
+  Usuario? usuario;
 
   void onLoginButtonPressed(String email, String password) async {
     print("onLoginButtonPressed");
@@ -24,10 +25,13 @@ class AuthenticationViewModel extends Cubit<AuthenticationState> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
 
       prefs.setString("authData", jsonEncode(authData));
-      emit(AuthenticationSuccessState());
+      usuario = await userService.getUsuarioData(authData.idUsuario);
+
+      emit(AuthenticationSuccessState(usuario: usuario));
     } catch (e) {
+              print(e);
+
       if (e is UnauthorisedException) {
-        print(e.message);
         emit(SignInState(message: e.message));
       } else if (e is BadRequestException) {
         print(e.message);
@@ -50,11 +54,13 @@ class AuthenticationViewModel extends Cubit<AuthenticationState> {
       if (authJwtData != null
           ? !JwtDecoder.isExpired(authJwtData.jwt)
           : false) {
-        emit(AuthenticationSuccessState());
+        usuario = await userService.getUsuarioData(authJwtData.idUsuario);
+        emit(AuthenticationSuccessState(usuario: usuario));
       } else {
         emit(SignInState());
       }
     } catch (e) {
+      print(e);
       emit(SignInState(message: "Error de conexión"));
     }
   }

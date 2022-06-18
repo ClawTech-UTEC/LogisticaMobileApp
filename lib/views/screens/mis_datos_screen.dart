@@ -4,14 +4,14 @@ import 'package:clawtech_logistica_app/views/widgets/card_general.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class AjustesScreen extends StatefulWidget {
-  AjustesScreen({Key? key}) : super(key: key);
+class MisDatosScreen extends StatefulWidget {
+  MisDatosScreen({Key? key}) : super(key: key);
 
   @override
-  State<AjustesScreen> createState() => _AjustesScreenState();
+  State<MisDatosScreen> createState() => _MisDatosScreenState();
 }
 
-class _AjustesScreenState extends State<AjustesScreen> {
+class _MisDatosScreenState extends State<MisDatosScreen> {
   late AuthenticationViewModel _authenticationViewModel;
   late Usuario _usuario;
   @override
@@ -20,6 +20,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
     super.initState();
     _authenticationViewModel =
         BlocProvider.of<AuthenticationViewModel>(context);
+    _usuario = _authenticationViewModel.state.usuario!;
   }
 
   @override
@@ -38,21 +39,21 @@ class _AjustesScreenState extends State<AjustesScreen> {
               ListTile(
                 leading: Icon(Icons.person),
                 title: Text(
-                  "Usuario: GUILLERMO RODRIGUEZ",
+                  "Usuario: ${_usuario.nombre} ${_usuario.apellido}",
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
               ),
               ListTile(
                 leading: Icon(Icons.email),
                 title: Text(
-                  "Email: guillermo@utec.edu.uy",
+                  "Email: ${_usuario.email}",
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
               ),
               ListTile(
                 leading: Icon(Icons.route_outlined),
                 title: Text(
-                  "Rol: Administrador",
+                  "Rol: ${_usuario.tipoUsuario}",
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
               ),

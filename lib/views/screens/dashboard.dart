@@ -1,5 +1,5 @@
 import 'package:clawtech_logistica_app/view_model/authentication_viewmodel.dart';
-import 'package:clawtech_logistica_app/views/screens/ajustes_screen.dart';
+import 'package:clawtech_logistica_app/views/screens/mis_datos_screen.dart';
 import 'package:clawtech_logistica_app/views/screens/crear_pedido_screen.dart';
 import 'package:clawtech_logistica_app/views/screens/crear_recepcion_screen.dart';
 import 'package:clawtech_logistica_app/views/screens/deposito_view.dart';
@@ -60,7 +60,7 @@ class _DashboardPageState extends State<DashboardPage> {
             ListadoPedidos(),
             ListadoRecepciones(),
             // DepositoView(),
-             AjustesScreen()
+            MisDatosScreen()
           ],
           controller: _pageController,
         ),
@@ -71,7 +71,9 @@ class _DashboardPageState extends State<DashboardPage> {
             BottomNavigationBarItem(
               icon: Icon(Icons.home_outlined),
               activeIcon: Container(
-                child: Icon(Icons.home, )),
+                  child: Icon(
+                Icons.home,
+              )),
               label: 'Home',
               backgroundColor: Theme.of(context).backgroundColor,
             ),
@@ -98,7 +100,6 @@ class _DashboardPageState extends State<DashboardPage> {
               activeIcon: Icon(Icons.settings),
               label: 'Mis Datos',
               backgroundColor: Theme.of(context).backgroundColor,
-              
             ),
           ],
           currentIndex: _selectedIndex,
@@ -127,13 +128,13 @@ class ResumenPrincipal extends StatelessWidget {
               padding: const EdgeInsets.only(top: 8.0),
               child: Container(),
             ),
-         const   Expanded(
+            const Expanded(
               child: Padding(
-                  padding:  EdgeInsets.all(8.0), child: RecepcionesCard()),
+                  padding: EdgeInsets.all(8.0), child: RecepcionesCard()),
             ),
-           const Expanded(
+            const Expanded(
               child: Padding(
-                padding:  EdgeInsets.all(8.0),
+                padding: EdgeInsets.all(8.0),
                 child: PedidosCard(),
               ),
             ),
@@ -160,19 +161,16 @@ class PedidosCard extends StatelessWidget {
         child: Container(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height * 0.3,
-            child: Stack(
-              alignment : Alignment.center,
-
-                children: [
-
-                const  Positioned(
-                   child: Padding(
-                     padding: const EdgeInsets.all(32.0),
-                     child: Opacity(
-                       opacity: 0.5,
-                       child: Image(image: AssetImage( "assets/lista_deposito.png"))),
-                   )
-                   ), Column(
+            child: Stack(alignment: Alignment.center, children: [
+              const Positioned(
+                  child: Padding(
+                padding: const EdgeInsets.all(32.0),
+                child: Opacity(
+                    opacity: 0.5,
+                    child:
+                        Image(image: AssetImage("assets/lista_deposito.png"))),
+              )),
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
@@ -233,18 +231,16 @@ class RecepcionesCard extends StatelessWidget {
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height * 0.3,
               child: Stack(
-                alignment : Alignment.center,
-
+                alignment: Alignment.center,
                 children: [
-
-             const     Positioned(
-                   child: Padding(
-                     padding: const EdgeInsets.all(32.0),
-                     child: Opacity(
-                       opacity: 0.5,
-                       child: Image(image: AssetImage( "assets/deposito_completo.png"))),
-                   )
-                   ),
+                  const Positioned(
+                      child: Padding(
+                    padding: const EdgeInsets.all(32.0),
+                    child: Opacity(
+                        opacity: 0.5,
+                        child: Image(
+                            image: AssetImage("assets/deposito_completo.png"))),
+                  )),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -267,8 +263,8 @@ class RecepcionesCard extends StatelessWidget {
                         children: [
                           ElevatedButton(
                               style: ButtonStyle(
-                                  backgroundColor:
-                                      MaterialStateProperty.all(Colors.transparent),
+                                  backgroundColor: MaterialStateProperty.all(
+                                      Colors.transparent),
                                   elevation: MaterialStateProperty.all(0)),
                               onPressed: () {},
                               child: TextButton(

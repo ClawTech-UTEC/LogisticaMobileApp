@@ -74,4 +74,23 @@ class UserService {
       throw FetchDataException("Error desconocido");
     }
   }
+
+  Future<Usuario> getUsuarioData(int usuarioId) async {
+    final response = await http.post(
+      Uri.parse(apiBaseUrl + '/usuario/?id=$usuarioId'),
+      
+       headers: <String, String>{
+          'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+    );
+
+    print(response.body);
+    if (response.statusCode == 200) {
+      Usuario usuario = Usuario.fromJson(json.decode(response.body));
+      return usuario;
+    } else {
+      throw Exception('Failed to load Usuario');
+    }
+  }
 }
