@@ -11,7 +11,7 @@ abstract class AuthenticationState {
 class LoadingState extends AuthenticationState {}
 
 class AuthenticationSuccessState extends AuthenticationState {
-  // Usuario usuario;
+
 AuthenticationSuccessState({this.message , this.loading = false});
   String? message;
   bool loading;

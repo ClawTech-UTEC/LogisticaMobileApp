@@ -92,10 +92,3 @@ class _HomePageState extends State<HomePage> {
 
 
 
-// state is SignInErrorState
-//                       ? Login(errorMessage: state.message)
-//                       : state is SignUpState
-//                           ? RegistrationPage()
-//                           : state is SignUpErrorState
-//                               ? RegistrationPage(errorMessage: state.message)
-//                               : Login()));

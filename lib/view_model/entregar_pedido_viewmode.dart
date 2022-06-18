@@ -59,6 +59,7 @@ class EntregarPedidoViewModel
         state.pedido!.idPedido!,
         usuario.idUsuario!,
       );
+      print( "Pedido entregado");
       emit(state.copyWith(status: EntregarPedidoStateEnum.COMPLETED));
     } catch (e) {
       if (e is BadRequestException) {

@@ -12,8 +12,8 @@ class Pedido {
   Cliente cliente;
   String direccion;
   double total;
-  DateTime? duracionEstimada;
-  DateTime? duracionFinal;
+  int? duracionEstimada;
+  int? duracionFinal;
   Distribuidor? distribuidor;
   List<EstadoPedido> estadoPedido;
   List<PedidoProducto> productos;
@@ -39,10 +39,10 @@ class Pedido {
         total: json["total"].toDouble(),
         duracionEstimada: json["duracionEstimada"] == null
             ? null
-            : DateTime.parse(json["duracionEstimada"]),
+            : json["duracionEstimada"],
         duracionFinal: json["duracionFinal"] == null
             ? null
-            : DateTime.parse(json["duracionFinal"]),
+            : json["duracionFinal"],
         distribuidor: json["distribuidor"] != null
             ? Distribuidor.fromJson(json["distribuidor"])
             : null,
@@ -58,8 +58,8 @@ class Pedido {
         "cliente": cliente.toJson(),
         "direccion": direccion,
         "total": total,
-        "duracionEstimada": duracionEstimada == null ? null : duracionEstimada!.toIso8601String(),
-        "duracionFinal": duracionFinal == null ? null : duracionFinal!.toIso8601String(),
+        "duracionEstimada": duracionEstimada == null ? null : duracionEstimada!,
+        "duracionFinal": duracionFinal == null ? null : duracionFinal!,
         "distribuidor": distribuidor?.toJson(),
         "estadoPedido": List<dynamic>.from(estadoPedido.map((x) => x.toJson())),
         "productos": List<dynamic>.from(productos.map((x) => x.toJson())),

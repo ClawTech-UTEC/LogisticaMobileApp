@@ -2,6 +2,7 @@ import 'package:clawtech_logistica_app/view_model/authentication_viewmodel.dart'
 import 'package:clawtech_logistica_app/views/screens/ajustes_screen.dart';
 import 'package:clawtech_logistica_app/views/screens/crear_pedido_screen.dart';
 import 'package:clawtech_logistica_app/views/screens/crear_recepcion_screen.dart';
+import 'package:clawtech_logistica_app/views/screens/deposito_view.dart';
 import 'package:clawtech_logistica_app/views/screens/lista_pedidos_screen.dart';
 import 'package:clawtech_logistica_app/views/screens/lista_recepciones.dart';
 import 'package:flutter/material.dart';
@@ -58,7 +59,8 @@ class _DashboardPageState extends State<DashboardPage> {
             ResumenPrincipal(),
             ListadoPedidos(),
             ListadoRecepciones(),
-            AjustesScreen()
+            // DepositoView(),
+             AjustesScreen()
           ],
           controller: _pageController,
         ),
@@ -85,10 +87,16 @@ class _DashboardPageState extends State<DashboardPage> {
               label: 'Recepciones',
               backgroundColor: Theme.of(context).backgroundColor,
             ),
+            //  BottomNavigationBarItem(
+            //   icon: Icon(Icons.storage_outlined),
+            //   activeIcon: Icon(Icons.storage),
+            //   label: 'Deposito',
+            //   backgroundColor: Theme.of(context).backgroundColor,
+            // ),
             BottomNavigationBarItem(
               icon: Icon(Icons.settings_outlined),
               activeIcon: Icon(Icons.settings),
-              label: 'Ajustes',
+              label: 'Mis Datos',
               backgroundColor: Theme.of(context).backgroundColor,
               
             ),
