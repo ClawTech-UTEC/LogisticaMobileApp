@@ -9,6 +9,7 @@ class DetalleRecepcionViewModel
       : super(DetalleRecepcionState(
             DetalleRecepcionStateEnum.loading, null, null)) {
     on<LoadRecepcionEvent>(onLoadRecepcion);
+    on<CancelarRecepcionEvent>(onCancelarRecepcion);
   }
   RecepcionService recepcionService = new RecepcionService();
   AuthService authService = new AuthService();

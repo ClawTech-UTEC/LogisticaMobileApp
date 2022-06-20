@@ -4,5 +4,6 @@ enum TipoEstadoPedido {
   CONTROLADO,
   DESPACHADO,
   ENTREGADO,
-  CANCELADO
+  CANCELADO,
+  DEVUELTO
 }

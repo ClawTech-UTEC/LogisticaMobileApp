@@ -1,4 +1,7 @@
 import 'package:clawtech_logistica_app/models/pedidos.dart';
+import 'package:clawtech_logistica_app/services/auth_service.dart';
+import 'package:clawtech_logistica_app/services/pedidos_service.dart';
+import 'package:clawtech_logistica_app/services/user_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class DetallePedidoViewModel
@@ -7,15 +10,33 @@ class DetallePedidoViewModel
       : super(DetallePedidoState(DetallePedidoStateEnum.loading, null)) {
     on<LoadPedidoEvent>(onLoadPedido);
   }
+  PedidosService pedidosService = PedidosService();
+  AuthService authService = AuthService();
 
-  onLoadPedido(
-      LoadPedidoEvent event, Emitter<DetallePedidoState> emit) async {
-    emit(state.copyWith( 
-        state: DetallePedidoStateEnum.loaded, pedido: event.pedido, 
-        
-        
-        ));
+  Future<void> descargarPdfDetallePedido(Pedido pedido) async {
+    print("Descargando PDF del pedido ${pedido.idPedido} ");
+    await pedidosService.descargarPdfPedido(pedido.idPedido!);
   }
+
+  onLoadPedido(LoadPedidoEvent event, Emitter<DetallePedidoState> emit) async {
+    emit(state.copyWith(
+      state: DetallePedidoStateEnum.loaded,
+      pedido: event.pedido,
+    ));
+  }
+
+  cancelarPedido(Pedido pedido) async {
+    
+    print("Cancelando pedido ${pedido.idPedido} ");
+    await pedidosService.cancelarPedido(pedido.idPedido!,await authService.getIdUsuario());
+  }
+
+  devolverPedido(Pedido pedido) async {
+    print("Devolviento pedido ${pedido.idPedido} ");
+    await pedidosService.devolverPedido(
+        pedido.idPedido!, await authService.getIdUsuario());
+  }
+  
 }
 
 abstract class DetallePedidoEvent {

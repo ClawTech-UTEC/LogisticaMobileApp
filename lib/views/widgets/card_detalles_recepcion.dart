@@ -1,6 +1,8 @@
 import 'package:barcode_widget/barcode_widget.dart';
 import 'package:clawtech_logistica_app/models/recepcion.dart';
 import 'package:clawtech_logistica_app/models/recepcion_producto.dart';
+import 'package:clawtech_logistica_app/utils/confirmation_diolog.dart';
+import 'package:clawtech_logistica_app/view_model/detalle_pedido_viewmodel.dart';
 import 'package:clawtech_logistica_app/view_model/detalle_recepcion_viewmodel.dart';
 import 'package:clawtech_logistica_app/views/screens/controllar_recepcion_screen.dart';
 import 'package:clawtech_logistica_app/views/screens/dashboard.dart';
@@ -92,7 +94,7 @@ class _CardDetallesRecepcionState extends State<CardDetallesRecepcion> {
                   FittedBox(
                     fit: BoxFit.fitWidth,
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         widget.recepcion.getEstadoActual.name == "PENDIENTE"
                             ? Padding(
@@ -145,31 +147,50 @@ class _CardDetallesRecepcionState extends State<CardDetallesRecepcion> {
                                 ),
                               )
                             : Container(),
+                        widget.recepcion.getEstadoActual.name == "CANCELADO"
+                            ? Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: ElevatedButton(
+                                  child: Text('Inicio'),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                              )
+                            : Container(),
                         widget.recepcion.getEstadoActual.name != "CANCELADO"
                             ? Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: ElevatedButton(
                                   child: Text('Cancelar'),
                                   onPressed: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                DashboardPage()));
+                                    confirmarcionDiolog(
+                                        context: context,
+                                        title:
+                                            '¿Confirma cancelar la recepcion?',
+                                        onConfirm: () {
+                                          viewModel
+                                              .add(CancelarRecepcionEvent());
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      DashboardPage()));
+                                        });
                                   },
                                 ),
                               )
                             : Container(),
                         Container(),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: ElevatedButton(
-                            child: Text('Compartir'),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                          ),
-                        ),
+                        // Padding(
+                        //   padding: const EdgeInsets.all(8.0),
+                        //   child: ElevatedButton(
+                        //     child: Text('Compartir'),
+                        //     onPressed: () {
+                        //       Navigator.pop(context);
+                        //     },
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),

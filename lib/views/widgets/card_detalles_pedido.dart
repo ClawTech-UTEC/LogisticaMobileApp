@@ -1,6 +1,8 @@
 import 'package:barcode_widget/barcode_widget.dart';
 import 'package:clawtech_logistica_app/models/pedido_producto.dart';
 import 'package:clawtech_logistica_app/models/pedidos.dart';
+import 'package:clawtech_logistica_app/utils/confirmation_diolog.dart';
+import 'package:clawtech_logistica_app/view_model/detalle_pedido_viewmodel.dart';
 import 'package:clawtech_logistica_app/views/screens/controlar_pedido_screen.dart';
 import 'package:clawtech_logistica_app/views/screens/dashboard.dart';
 import 'package:clawtech_logistica_app/views/screens/despachar_pedido_screen.dart';
@@ -11,8 +13,11 @@ import 'package:clawtech_logistica_app/views/widgets/tabla_detalle_pedido.dart';
 import 'package:flutter/material.dart';
 
 class CardDetallePedido extends StatefulWidget {
-  CardDetallePedido({Key? key, required this.pedido}) : super(key: key);
+  CardDetallePedido(
+      {Key? key, required this.pedido, required this.detallePedidoViewModel})
+      : super(key: key);
   Pedido pedido;
+  DetallePedidoViewModel detallePedidoViewModel;
   @override
   State<CardDetallePedido> createState() => _CardDetallePedidoState();
 }
@@ -121,7 +126,9 @@ class _CardDetallePedidoState extends State<CardDetallePedido> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => DespacharPedidoScren(pedido: widget.pedido,)));
+                                builder: (context) => DespacharPedidoScren(
+                                      pedido: widget.pedido,
+                                    )));
                       },
                     )
                   : Container(),
@@ -141,19 +148,47 @@ class _CardDetallePedidoState extends State<CardDetallePedido> {
                   ? ElevatedButton(
                       child: Text('Cancelar'),
                       onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => DashboardPage()));
+                        confirmarcionDiolog(
+                            context: context,
+                            title: '¿Confirmar Cancelar el Pedido?',
+                            onConfirm: () {
+                              widget.detallePedidoViewModel
+                                  .cancelarPedido(widget.pedido);
+
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => DashboardPage()));
+                            });
                       },
                     )
                   : Container(),
-              ElevatedButton(
-                child: Text('Compartir'),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
+
+                    widget.pedido.getEstadoActual.name == "ENTREGADO"
+                  ? ElevatedButton(
+                      child: Text('Devolver'),
+                      onPressed: () {
+                        confirmarcionDiolog(
+                            context: context,
+                            title: '¿Confirmar Devolver el Pedido?',
+                            onConfirm: () async {
+                          await    widget.detallePedidoViewModel
+                                  .devolverPedido(widget.pedido);
+
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => DashboardPage()));
+                            });
+                      },
+                    )
+                  : Container(),
+              // ElevatedButton(
+              //   child: Text('Compartir'),
+              //   onPressed: () {
+              //     Navigator.pop(context);
+              //   },
+              // ),
             ],
           ),
         ],

@@ -54,6 +54,14 @@ class _CrearPedidoScreenState extends State<CrearPedidoScreen> {
                     content: Text('${state.error}'),
                   ),
                 );
+                if (state.status == CrearPedidoStateEnum.COMPLETED) {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => DetallePedidoScreen(
+                                pedido: state.pedido!,
+                              )));
+                }
               }
             },
             child: BlocBuilder(
@@ -61,12 +69,6 @@ class _CrearPedidoScreenState extends State<CrearPedidoScreen> {
                 builder: (context, CrearPedidoState state) {
                   if (state.status == CrearPedidoStateEnum.INITIAL) {
                     return LoadingPage();
-                  }
-
-                  if (state.status == CrearPedidoStateEnum.COMPLETED) {
-                    return CardDetallePedido(
-                      pedido: state.pedido!,
-                    );
                   }
 
                   return Container(

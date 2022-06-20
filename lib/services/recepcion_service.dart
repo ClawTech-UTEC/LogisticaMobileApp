@@ -55,12 +55,9 @@ class RecepcionService {
   }
 
   Future<Recepcion> cancelarRecepcion(int idRecepcion, int idUsuario) async {
-    final response = await http.put(
-      Uri.parse(apiBaseUrl + '/recepcion/cancelar'),
-      body: jsonEncode({
-        'idRecepcion': idRecepcion,
-        'idUsuario': idUsuario,
-      }),
+    final response = await http.post(
+      Uri.parse(apiBaseUrl + '/recepcion/cancelar/$idRecepcion/?idUsuario=$idUsuario'),
+     
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

@@ -28,11 +28,13 @@ class _DetallePedidoScreenState extends State<DetallePedidoScreen> {
   @override
   Widget build(BuildContext context) {
     return ScaffoldGeneralBackground(
+        // onCompartir: () async =>
+        //     _detallePedidoViewModel.descargarPdfDetallePedido(widget.pedido),
         title: "Detalle Pedido",
         child: BlocBuilder(
             bloc: _detallePedidoViewModel,
             builder: (context, DetallePedidoState state) {
-            return  CardDetallePedido(pedido: widget.pedido);
+              return CardDetallePedido(pedido: widget.pedido, detallePedidoViewModel: _detallePedidoViewModel,);
             }));
   }
 }

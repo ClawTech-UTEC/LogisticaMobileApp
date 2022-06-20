@@ -45,17 +45,17 @@ class _EntregarPedidoScrenState extends State<EntregarPedidoScren> {
                   backgroundColor: Theme.of(context).accentColor,
                   content: Text('${state.error}'),
                 ),
-              );}
-              if (state.status == EntregarPedidoStateEnum.COMPLETED) {
-                print(true);
+              );
+            }
+            if (state.status == EntregarPedidoStateEnum.COMPLETED) {
+              print(true);
 
-                Navigator.push(
-                  context,
-                  MaterialPageRoute<void>(
-                      builder: (BuildContext context) => HomePage()),
-                );
-              }
-            
+              Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                    builder: (BuildContext context) => HomePage()),
+              );
+            }
           },
           child: BlocBuilder(
               bloc: viewModel..add(EntregarPedidoEventLoad(widget.pedido)),
@@ -114,23 +114,19 @@ class _EntregarPedidoScrenState extends State<EntregarPedidoScren> {
                                   ])
                                 ],
                               )),
-                          
                           Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 ElevatedButton(
                                     child: Text('Aceptar'),
                                     onPressed: () {
-                                          confirmarcionDiolog(
-                                              context: context,
-                                              title: 'Confirmar Despacho',
-                                              onConfirm: () {
-                                                viewModel.add(
-                                                    EntregarPedidoEventConfirmarPedido(
-                                               ));
-                                              })
-                                          
-                                      ;
+                                      confirmarcionDiolog(
+                                          context: context,
+                                          title: 'Confirmar Despacho',
+                                          onConfirm: () {
+                                            viewModel.add(
+                                                EntregarPedidoEventConfirmarPedido());
+                                          });
                                     })
                               ])
                         ]))
