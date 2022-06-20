@@ -27,6 +27,7 @@ class ControllarRecepcionScreen extends StatefulWidget {
 class _ControllarRecepcionScreenState extends State<ControllarRecepcionScreen> {
   ControlRecepcionViewModel viewModel = ControlRecepcionViewModel();
   TextEditingController _searchController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
   @override
   void initState() {
     super.initState();
@@ -83,8 +84,12 @@ class _ControllarRecepcionScreenState extends State<ControllarRecepcionScreen> {
                           }),
                       FittedBox(
                         fit: BoxFit.fitWidth,
-                        child: _createControllRecepctionDataTable(
-                            state.recepcion!.productos, state.tableController),
+                        child: Form(
+                          key: _formKey,
+                          child: _createControllRecepctionDataTable(
+                              state.recepcion!.productos,
+                              state.tableController),
+                        ),
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -95,35 +100,50 @@ class _ControllarRecepcionScreenState extends State<ControllarRecepcionScreen> {
                               Theme.of(context).accentColor,
                             )),
                             onPressed: (() => {
-                                  confirmarcionDiolog(
-                                      onConfirm: () {
-                                        viewModel.add(
-                                            ControlRecepcionEventCompleted(
-                                                controlarDiferencias: true));
-                                      },
-                                      context: context,
-                                      title: "Aceptar la recepcion")
+                                  if (_formKey.currentState!.validate())
+                                    {
+                                      confirmarcionDiolog(
+                                          onConfirm: () {
+                                            viewModel.add(
+                                                ControlRecepcionEventCompleted(
+                                                    controlarDiferencias:
+                                                        true));
+                                          },
+                                          context: context,
+                                          title:
+                                              "¿Confirma acepatar la recepcion?")
+                                    }
+                                  else
+                                    {
+                                      Scaffold.of(context).showSnackBar(
+                                        SnackBar(
+                                          backgroundColor:
+                                              Theme.of(context).accentColor,
+                                          content: Text('Datos no coinciden'),
+                                        ),
+                                      )
+                                    }
                                 }),
-                            child: Text("Aceptar"),
+                            child: Text("Aceptar recepcion"),
                           ),
-                          ElevatedButton(
-                            style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(
-                              Theme.of(context).accentColor,
-                            )),
-                            onPressed: (() => {
-                                  confirmarcionDiolog(
-                                      onConfirm: () {
-                                        viewModel.add(
-                                            ControlRecepcionEventCompleted(
-                                                controlarDiferencias: false));
-                                      },
-                                      context: context,
-                                      title:
-                                          "Aceptar la recepcion con diferencias")
-                                }),
-                            child: Text("Aceptar con diferencias"),
-                          ),
+                          // ElevatedButton(
+                          //   style: ButtonStyle(
+                          //       backgroundColor: MaterialStateProperty.all(
+                          //     Theme.of(context).accentColor,
+                          //   )),
+                          //   onPressed: (() => {
+                          //         confirmarcionDiolog(
+                          //             onConfirm: () {
+                          //               viewModel.add(
+                          //                   ControlRecepcionEventCompleted(
+                          //                       controlarDiferencias: false));
+                          //             },
+                          //             context: context,
+                          //             title:
+                          //                 "Aceptar la recepcion con diferencias")
+                          //       }),
+                          //   child: Text("Aceptar con diferencias"),
+                          // ),
                         ],
                       )
                     ],
@@ -195,6 +215,16 @@ List<DataRow> _controllRecepctionProductsRows(List<RecepcionProducto> productos,
       DataCell(Text('${entry.cantidad}')),
       DataCell(
           TextFormField(
+            validator: (value) {
+              print(value);
+              if (value == null) {
+                return '';
+              }
+              if (value != entry.cantidad.toString()){
+                return '';
+              }
+              return null;
+            },
             controller: controllersCantidadIngresada[productos.indexOf(entry)],
             //  initialValue: '${entry.value}',
             decoration: InputDecoration(),

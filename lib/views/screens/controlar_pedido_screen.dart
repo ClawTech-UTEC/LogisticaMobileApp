@@ -27,6 +27,7 @@ class _ControlarPedidoScreenState extends State<ControlarPedidoScreen> {
   ControlarPedidoViewModel viewModel = ControlarPedidoViewModel();
   TextEditingController _searchController = TextEditingController();
 
+  final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return ScaffoldGeneralBackground(
@@ -82,8 +83,11 @@ class _ControlarPedidoScreenState extends State<ControlarPedidoScreen> {
                             }),
                         FittedBox(
                           fit: BoxFit.fitWidth,
-                          child: _createControllRecepctionDataTable(
-                              state.pedido!.productos, state.tableController),
+                          child: Form(
+                            key: _formKey,
+                            child: _createControllRecepctionDataTable(
+                                state.pedido!.productos, state.tableController),
+                          ),
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -94,13 +98,27 @@ class _ControlarPedidoScreenState extends State<ControlarPedidoScreen> {
                                 Theme.of(context).accentColor,
                               )),
                               onPressed: (() => {
-                                    confirmarcionDiolog(
-                                        onConfirm: () {
-                                          viewModel.add(
-                                              ControlarPedidoEventConfirmarPedido());
-                                        },
-                                        context: context,
-                                        title: "Aceptar el pedido")
+                                    if (_formKey.currentState!.validate())
+                                      {
+                                        confirmarcionDiolog(
+                                            onConfirm: () {
+                                              viewModel.add(
+                                                  ControlarPedidoEventConfirmarPedido());
+                                            },
+                                            context: context,
+                                            title: "Aceptar el pedido")
+                                      }
+                                    else
+                                      {
+                                        Scaffold.of(context).showSnackBar(
+                                          SnackBar(
+                                            backgroundColor:
+                                                Theme.of(context).accentColor,
+                                            content:
+                                                Text('No coincide los datos'),
+                                          ),
+                                        )
+                                      }
                                   }),
                               child: Text("Aceptar"),
                             ),
@@ -178,6 +196,15 @@ List<DataRow> _controllRecepctionProductsRows(List<PedidoProducto> productos,
           TextFormField(
             controller: controllersCantidadIngresada[productos.indexOf(entry)],
             //  initialValue: '${entry.value}',
+            validator: (value) {
+              if (value == null) {
+                return '';
+              }
+              if (value != entry.cantidad.toString()) {
+                return '';
+              }
+              return null;
+            },
             decoration: InputDecoration(),
             keyboardType: TextInputType.number,
             inputFormatters: <TextInputFormatter>[

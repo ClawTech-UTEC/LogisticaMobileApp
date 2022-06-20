@@ -53,7 +53,7 @@ class _CrearPedidoScreenState extends State<CrearPedidoScreen> {
                     backgroundColor: Theme.of(context).accentColor,
                     content: Text('${state.error}'),
                   ),
-                );
+                );}
                 if (state.status == CrearPedidoStateEnum.COMPLETED) {
                   Navigator.push(
                       context,
@@ -62,8 +62,7 @@ class _CrearPedidoScreenState extends State<CrearPedidoScreen> {
                                 pedido: state.pedido!,
                               )));
                 }
-              }
-            },
+                          },
             child: BlocBuilder(
                 bloc: viewModel,
                 builder: (context, CrearPedidoState state) {

@@ -24,6 +24,7 @@ class PrepararPedidoScreen extends StatefulWidget {
 class _PrepararPedidoScreenState extends State<PrepararPedidoScreen> {
   PrepararPedidoViewModel viewModel = PrepararPedidoViewModel();
   TextEditingController _searchController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -78,8 +79,11 @@ class _PrepararPedidoScreenState extends State<PrepararPedidoScreen> {
                             }),
                         FittedBox(
                           fit: BoxFit.fitWidth,
-                          child: _createControllRecepctionDataTable(
-                              state.pedido!.productos, state.tableController),
+                          child: Form(
+                            key: _formKey,
+                            child: _createControllRecepctionDataTable(
+                                state.pedido!.productos, state.tableController),
+                          ),
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -90,13 +94,26 @@ class _PrepararPedidoScreenState extends State<PrepararPedidoScreen> {
                                 Theme.of(context).accentColor,
                               )),
                               onPressed: (() => {
-                                    confirmarcionDiolog(
-                                        onConfirm: () {
-                                          viewModel.add(
-                                              PrepararPedidoEventConfirmarPedido());
-                                        },
-                                        context: context,
-                                        title: "Confirma preparar el pedido")
+                             if(  _formKey.currentState!.validate())     
+                                         {
+                                            confirmarcionDiolog(
+                                                onConfirm: () {
+                                                  viewModel.add(
+                                                      PrepararPedidoEventConfirmarPedido());
+                                                },
+                                                context: context,
+                                                title:
+                                                    "¿Confirma preparar el pedido?")
+                                          }
+                                        else{
+
+                                          Scaffold.of(context).showSnackBar(
+                                            SnackBar(
+                                              backgroundColor: Theme.of(context).accentColor,
+                                              content: Text('Los datos no coinciden'),
+                                            ),
+                                          )
+                                        }
                                   }),
                               child: Text("Aceptar"),
                             ),
@@ -140,6 +157,15 @@ List<DataRow> _controllRecepctionProductsRows(List<PedidoProducto> productos,
       DataCell(Text('${entry.cantidad}')),
       DataCell(
           TextFormField(
+            validator: (value) {
+              if (value == null) {
+                return '';
+              }
+              if (value != entry.cantidad.toString()) {
+                return '';
+              }
+              return null;
+            },
             controller: controllersCantidadIngresada[productos.indexOf(entry)],
             //  initialValue: '${entry.value}',
             decoration: InputDecoration(),
