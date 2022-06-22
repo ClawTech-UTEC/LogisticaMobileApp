@@ -2,6 +2,7 @@ import 'package:clawtech_logistica_app/models/cliente.dart';
 import 'package:clawtech_logistica_app/models/pedidos.dart';
 import 'package:clawtech_logistica_app/models/producto.dart';
 import 'package:clawtech_logistica_app/models/tipo_producto.dart';
+import 'package:clawtech_logistica_app/utils/confirmation_diolog.dart';
 import 'package:clawtech_logistica_app/view_model/crear_pedido_viewmodel.dart';
 import 'package:clawtech_logistica_app/view_model/events/crear_pedido_events.dart';
 import 'package:clawtech_logistica_app/view_model/states/crear_pedido_state.dart';
@@ -53,16 +54,17 @@ class _CrearPedidoScreenState extends State<CrearPedidoScreen> {
                     backgroundColor: Theme.of(context).accentColor,
                     content: Text('${state.error}'),
                   ),
-                );}
-                if (state.status == CrearPedidoStateEnum.COMPLETED) {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => DetallePedidoScreen(
-                                pedido: state.pedido!,
-                              )));
-                }
-                          },
+                );
+              }
+              if (state.status == CrearPedidoStateEnum.COMPLETED) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => DetallePedidoScreen(
+                              pedido: state.pedido!,
+                            )));
+              }
+            },
             child: BlocBuilder(
                 bloc: viewModel,
                 builder: (context, CrearPedidoState state) {
@@ -135,7 +137,11 @@ class _CrearPedidoScreenState extends State<CrearPedidoScreen> {
                         if (_index == 2) {
                           print(_index);
                           _formClientesKey.currentState!.save();
-                          viewModel.add(CrearPedidoEventConfirmarPedido());
+                          confirmarcionDiolog(
+                              context: context,
+                              title: "¿Confirma crear el pedido?",
+                              onConfirm: () => viewModel
+                                  .add(CrearPedidoEventConfirmarPedido()));
                         }
                         return;
                       },

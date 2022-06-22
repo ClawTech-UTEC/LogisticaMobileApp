@@ -46,7 +46,6 @@ class AgregarProductosPedidoForm extends StatelessWidget {
                             height: MediaQuery.of(context).size.height * 0.1,
                             width: MediaQuery.of(context).size.width * 0.6,
                             child: DropdownSearch<Producto>(
-                              // icon: Icon(Icons.arrow_drop_down),
                               popupProps: PopupProps.menu(showSearchBox: true),
                               validator: (value) => value == null
                                   ? 'Debe seleccionar un Producto'
@@ -65,12 +64,6 @@ class AgregarProductosPedidoForm extends StatelessWidget {
                                         .searchProductStockByNameOrCodigoDeBarras(searchValue, int.tryParse(searchValue))
                                     : viewModel.state.productos;
                               },
-                              // items: viewModel.state.productos
-                              //     .map((producto) => DropdownMenuItem(
-                              //           child: Text(producto.tipoProducto.nombre),
-                              //           value: producto,
-                              //         ))
-                              //     .toList(),
                             ),
                           ),
                           Center(

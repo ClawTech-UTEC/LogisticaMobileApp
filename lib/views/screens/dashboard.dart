@@ -5,6 +5,8 @@ import 'package:clawtech_logistica_app/views/screens/crear_recepcion_screen.dart
 import 'package:clawtech_logistica_app/views/screens/deposito_view.dart';
 import 'package:clawtech_logistica_app/views/screens/lista_pedidos_screen.dart';
 import 'package:clawtech_logistica_app/views/screens/lista_recepciones.dart';
+import 'package:clawtech_logistica_app/views/screens/reporte_pedidos_screen.dart';
+import 'package:clawtech_logistica_app/views/screens/reporte_recepciones_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -155,61 +157,71 @@ class PedidosCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height * 0.3,
-            child: Stack(alignment: Alignment.center, children: [
-              const Positioned(
-                  child: Padding(
-                padding: const EdgeInsets.all(32.0),
-                child: Opacity(
-                    opacity: 0.5,
-                    child:
-                        Image(image: AssetImage("assets/lista_deposito.png"))),
-              )),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Text("Pedidos",
-                          style: Theme.of(context).textTheme.titleLarge),
-                      Expanded(child: Container()),
-                      Column(
-                        children: [
-                          Text("1 pedido nuevo"),
-                          Text("2 pedidos pendientes")
-                        ],
-                      ),
-                    ],
-                  ),
-                  Expanded(child: Container()),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      ElevatedButton(
-                          style: ButtonStyle(
-                              backgroundColor:
-                                  MaterialStateProperty.all(Colors.transparent),
-                              elevation: MaterialStateProperty.all(0)),
-                          onPressed: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                  builder: (context) => CrearPedidoScreen()),
-                            );
-                          },
-                          child: Text(
-                            "Crear nuevo pedido",
-                            style: TextStyle(color: Colors.blueAccent),
-                          )),
-                    ],
-                  )
-                ],
-              ),
-            ])),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ReportePedidosScreen(),
+          ),
+        );
+      },
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height * 0.3,
+              child: Stack(alignment: Alignment.center, children: [
+                const Positioned(
+                    child: Padding(
+                  padding: const EdgeInsets.all(32.0),
+                  child: Opacity(
+                      opacity: 0.5,
+                      child: Image(
+                          image: AssetImage("assets/lista_deposito.png"))),
+                )),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text("Pedidos",
+                            style: Theme.of(context).textTheme.titleLarge),
+                        Expanded(child: Container()),
+                        Column(
+                          children: [
+                            Text("Ver grafica pedidos"),
+                         
+                          ],
+                        ),
+                      ],
+                    ),
+                    Expanded(child: Container()),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        ElevatedButton(
+                            style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(
+                                    Colors.transparent),
+                                elevation: MaterialStateProperty.all(0)),
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                    builder: (context) => CrearPedidoScreen()),
+                              );
+                            },
+                            child: Text(
+                              "Crear nuevo pedido",
+                              style: TextStyle(color: Colors.blueAccent),
+                            )),
+                      ],
+                    )
+                  ],
+                ),
+              ])),
+        ),
       ),
     );
   }
@@ -224,67 +236,77 @@ class RecepcionesCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Hero(
       tag: "recepciones_card",
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * 0.3,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  const Positioned(
-                      child: Padding(
-                    padding: const EdgeInsets.all(32.0),
-                    child: Opacity(
-                        opacity: 0.5,
-                        child: Image(
-                            image: AssetImage("assets/deposito_completo.png"))),
-                  )),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text("Recepciones",
-                              style: Theme.of(context).textTheme.titleLarge),
-                          Expanded(child: Container()),
-                          Column(
-                            children: [
-                              Text("1 recepcion nueva"),
-                              Text("1 recepcion")
-                            ],
-                          ),
-                        ],
-                      ),
-                      Expanded(child: Container()),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          ElevatedButton(
-                              style: ButtonStyle(
-                                  backgroundColor: MaterialStateProperty.all(
-                                      Colors.transparent),
-                                  elevation: MaterialStateProperty.all(0)),
-                              onPressed: () {},
-                              child: TextButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            CrearRecepcionScreen()),
-                                  );
-                                },
-                                child: Text("Crear nueva recepcion",
-                                    style: TextStyle(color: Colors.blueAccent)),
-                              )),
-                        ],
-                      )
-                    ],
-                  ),
-                ],
-              )),
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ReporteRecepcionesScreen(),
+            ),
+          );
+        },
+        child: Card(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height * 0.3,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    const Positioned(
+                        child: Padding(
+                      padding: const EdgeInsets.all(32.0),
+                      child: Opacity(
+                          opacity: 0.5,
+                          child: Image(
+                              image: AssetImage("assets/deposito_completo.png"))),
+                    )),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Text("Recepciones",
+                                style: Theme.of(context).textTheme.titleLarge),
+                            Expanded(child: Container()),
+                            Column(
+                              children: [
+                                Text("Ver grafica recepciones"),
+                                
+                              ],
+                            ),
+                          ],
+                        ),
+                        Expanded(child: Container()),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            ElevatedButton(
+                                style: ButtonStyle(
+                                    backgroundColor: MaterialStateProperty.all(
+                                        Colors.transparent),
+                                    elevation: MaterialStateProperty.all(0)),
+                                onPressed: () {},
+                                child: TextButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              CrearRecepcionScreen()),
+                                    );
+                                  },
+                                  child: Text("Crear nueva recepcion",
+                                      style: TextStyle(color: Colors.blueAccent)),
+                                )),
+                          ],
+                        )
+                      ],
+                    ),
+                  ],
+                )),
+          ),
         ),
       ),
     );

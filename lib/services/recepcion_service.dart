@@ -7,6 +7,7 @@ import 'package:clawtech_logistica_app/models/auth_data.dart';
 import 'package:clawtech_logistica_app/models/estado_recepcion.dart';
 import 'package:clawtech_logistica_app/models/recepcion.dart';
 import 'package:clawtech_logistica_app/models/recepcion_producto.dart';
+import 'package:clawtech_logistica_app/models/reporte_data.dart';
 import 'package:clawtech_logistica_app/models/usuario.dart';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -89,6 +90,54 @@ class RecepcionService {
     );
     if (response.statusCode == 200) {
       return Recepcion.fromJson(json.decode(response.body));
+    }
+
+    if (response.statusCode == 400) {
+      throw BadRequestException(response.body.toString());
+    } else {
+      throw Exception('Failed');
+    }
+  }
+
+
+    Future<List<ReporteData>> getReporteRecepcionesAnual(int year) async {
+    final http.Response response = await http.get(
+      Uri.parse(apiBaseUrl + '/recepcion/reporte/$year'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+
+    print(response.body);
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      return (json.decode(response.body) as List)
+          .map((data) => ReporteData.fromJson(data))
+          .toList();
+    }
+
+    if (response.statusCode == 400) {
+      throw BadRequestException(response.body.toString());
+    } else {
+      throw Exception('Failed');
+    }
+  }
+
+
+   Future<List<ReporteData>> getReporteProductoRecepcionesAnual(int year, int idProducto) async {
+    final http.Response response = await http.get(
+      Uri.parse(apiBaseUrl + '/recepcion/reporte/$year/?idProducto=$idProducto'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+
+    print(response.body);
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      return (json.decode(response.body) as List)
+          .map((data) => ReporteData.fromJson(data))
+          .toList();
     }
 
     if (response.statusCode == 400) {

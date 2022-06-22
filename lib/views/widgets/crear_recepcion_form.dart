@@ -1,6 +1,9 @@
+import 'package:clawtech_logistica_app/models/producto.dart';
 import 'package:clawtech_logistica_app/models/provedor.dart';
 import 'package:clawtech_logistica_app/models/tipo_producto.dart';
 import 'package:clawtech_logistica_app/services/provedor_service.dart';
+import 'package:clawtech_logistica_app/services/stock_service.dart';
+import 'package:clawtech_logistica_app/utils/confirmation_diolog.dart';
 import 'package:clawtech_logistica_app/view_model/crear_recepcion_viewmodel.dart';
 import 'package:clawtech_logistica_app/view_model/events/crear_recepcion_events.dart';
 import 'package:dropdown_search/dropdown_search.dart';
@@ -58,9 +61,8 @@ class _CrearRecepcionFormState extends State<CrearRecepcionForm> {
                           child: Column(
                             children: [
                               DropdownSearch<Provedor>(
-                                popupProps: PopupProps.menu(
-                                  showSearchBox: true
-                                ),
+                                popupProps:
+                                    PopupProps.menu(showSearchBox: true),
                                 validator: (value) => value == null
                                     ? 'Debe seleccionar un Provedor'
                                     : null,
@@ -92,25 +94,52 @@ class _CrearRecepcionFormState extends State<CrearRecepcionForm> {
                                   }
                                 },
                               ),
-                              DropdownButtonFormField(
-                                key: _key,
-                                validator: (value) => value == null
-                                    ? 'Debe seleccionar un Provedor'
-                                    : null,
-                                decoration: InputDecoration(
-                                  labelText: 'Tipo De Producto',
+                              Container(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.1,
+                                // width: MediaQuery.of(context).size.width * 0.6,
+                                child: FormField(
+                                  key: _key,
+                                  builder:
+                                      (FormFieldState<dynamic> fieldState) =>
+                                          DropdownSearch<TipoProducto>(
+                                    selectedItem: _selectedTipoProducto,
+                                    popupProps:
+                                        PopupProps.menu(showSearchBox: true),
+                                    validator: (value) => value == null
+                                        ? 'Debe seleccionar un Producto'
+                                        : null,
+                                    dropdownSearchDecoration: InputDecoration(
+                                      labelText: 'Producto',
+                                    ),
+                                    onChanged: (x) {
+                                      _selectedTipoProducto = x as TipoProducto;
+                                    },
+                                    items: widget.tipoProductos,
+                                    itemAsString: (item) => item.nombre,
+                                  ),
                                 ),
-                                onChanged: (x) {
-                                  _selectedTipoProducto = x as TipoProducto;
-                                },
-                                value: _selectedTipoProducto,
-                                items: widget.tipoProductos
-                                    .map((tipoProducto) => DropdownMenuItem(
-                                          child: Text(tipoProducto.nombre),
-                                          value: tipoProducto,
-                                        ))
-                                    .toList(),
                               ),
+
+                              // DropdownButtonFormField(
+                              //   key: _key,
+                              //   validator: (value) => value == null
+                              //       ? 'Debe seleccionar un Provedor'
+                              //       : null,
+                              //   decoration: InputDecoration(
+                              //     labelText: 'Tipo De Producto',
+                              //   ),
+                              //   onChanged: (x) {
+                              //     _selectedTipoProducto = x as TipoProducto;
+                              //   },
+                              //   value: _selectedTipoProducto,
+                              //   items: widget.tipoProductos
+                              //       .map((tipoProducto) => DropdownMenuItem(
+                              //             child: Text(tipoProducto.nombre),
+                              //             value: tipoProducto,
+                              //           ))
+                              //       .toList(),
+                              // ),
                               TextFormField(
                                 controller: _cantidadController,
                                 decoration: InputDecoration(
@@ -170,7 +199,7 @@ class _CrearRecepcionFormState extends State<CrearRecepcionForm> {
                     ),
                   ),
                   onPressed: () {
-                    widget.viewModel.add(ConfirmarRecepcionEvent());
+                    confirmarcionDiolog(context: context, title: "¿Confirma crear recepcion?", onConfirm:()=> widget.viewModel.add(ConfirmarRecepcionEvent()));	
                   },
                   child: Container(
                       width: MediaQuery.of(context).size.width,

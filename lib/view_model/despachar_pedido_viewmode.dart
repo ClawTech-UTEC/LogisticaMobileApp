@@ -58,8 +58,9 @@ class DespacharPedidoViewModel
     try {
       await _pedidosService.despacharPedido(
         state.pedido!.idPedido!,
-        event.distribuidor.idDistribu!,
+        
         usuario.idUsuario!,
+        event.distribuidor.idDistribu!,
       );
       emit(state.copyWith(status: DespacharPedidoStateEnum.COMPLETED));
     } catch (e) {

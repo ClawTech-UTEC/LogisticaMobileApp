@@ -4,6 +4,7 @@ import 'package:clawtech_logistica_app/apis/api_exeptions.dart';
 import 'package:clawtech_logistica_app/constants.dart';
 import 'package:clawtech_logistica_app/models/pedido_producto.dart';
 import 'package:clawtech_logistica_app/models/pedidos.dart';
+import 'package:clawtech_logistica_app/models/reporte_data.dart';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -119,6 +120,7 @@ class PedidosService {
 
   Future<Pedido> despacharPedido(
       int idPedido, int idUsuaurio, int idDistribuidor) async {
+    print("id distribuidor: " + idDistribuidor.toString());
     final http.Response response = await http.put(
       Uri.parse(apiBaseUrl +
           '/pedidos/despachar/$idPedido/?idUsuario=$idUsuaurio&idDistribuidor=$idDistribuidor'),
@@ -184,7 +186,7 @@ class PedidosService {
     }
   }
 
-    Future<Pedido> cancelarPedido(int idPedido, int idUsuaurio) async {
+  Future<Pedido> cancelarPedido(int idPedido, int idUsuaurio) async {
     final http.Response response = await http.post(
       Uri.parse(
           apiBaseUrl + '/pedidos/cancelar/$idPedido/?idUsuario=$idUsuaurio'),
@@ -197,6 +199,53 @@ class PedidosService {
     print(response.statusCode);
     if (response.statusCode == 200) {
       return Pedido.fromJson(json.decode(response.body));
+    }
+
+    if (response.statusCode == 400) {
+      throw BadRequestException(response.body.toString());
+    } else {
+      throw Exception('Failed');
+    }
+  }
+
+  Future<List<ReporteData>> getReportePedidoAnual(int year) async {
+    final http.Response response = await http.get(
+      Uri.parse(apiBaseUrl + '/pedidos/reporte/$year'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+
+    print(response.body);
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      return (json.decode(response.body) as List)
+          .map((data) => ReporteData.fromJson(data))
+          .toList();
+    }
+
+    if (response.statusCode == 400) {
+      throw BadRequestException(response.body.toString());
+    } else {
+      throw Exception('Failed');
+    }
+  }
+
+  Future<List<ReporteData>> getReporteProductoPedidoAnual(
+      int year, int idProducto) async {
+    final http.Response response = await http.get(
+      Uri.parse(apiBaseUrl + '/pedidos/reporte/$year/?idProducto=$idProducto'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+
+    print(response.body);
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      return (json.decode(response.body) as List)
+          .map((data) => ReporteData.fromJson(data))
+          .toList();
     }
 
     if (response.statusCode == 400) {
@@ -228,9 +277,9 @@ class PedidosService {
         x.path + "./example/flutter.pdf",
         options: Options(headers: {HttpHeaders.acceptEncodingHeader: "*"}));
 
-        File file = File(x.path + "./pedido/$idPedido.pdf");
-        print(file.path);
-        Share.shareFiles([x.path + "./pedido/$idPedido.pdf"], text: 'Great picture');
-
+    File file = File(x.path + "./pedido/$idPedido.pdf");
+    print(file.path);
+    Share.shareFiles([x.path + "./pedido/$idPedido.pdf"],
+        text: 'Great picture');
   }
 }
