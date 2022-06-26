@@ -7,6 +7,7 @@ import 'package:clawtech_logistica_app/view_model/detalle_recepcion_viewmodel.da
 import 'package:clawtech_logistica_app/views/screens/controllar_recepcion_screen.dart';
 import 'package:clawtech_logistica_app/views/screens/dashboard.dart';
 import 'package:clawtech_logistica_app/views/screens/loading_screen.dart';
+import 'package:clawtech_logistica_app/views/screens/ubicar_productos_screen.dart';
 import 'package:clawtech_logistica_app/views/widgets/card_general.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -113,40 +114,24 @@ class _CardDetallesRecepcionState extends State<CardDetallesRecepcion> {
                                 ),
                               )
                             : Container(),
-                        widget.recepcion.getEstadoActual.name == "PREPARADO"
+                        widget.recepcion.getEstadoActual.name == "RECIBIDO"
                             ? Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: ElevatedButton(
-                                  child: Text('Despachar'),
+                                  child: Text('Ubicar en Depositar'),
                                   onPressed: () {
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                ControllarRecepcionScreen(
+                                                UbicarProductoScreen(
                                                   recepcion: widget.recepcion,
                                                 )));
                                   },
                                 ),
                               )
                             : Container(),
-                        widget.recepcion.getEstadoActual.name == "DESPACHADO"
-                            ? Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: ElevatedButton(
-                                  child: Text('Entregar'),
-                                  onPressed: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                ControllarRecepcionScreen(
-                                                  recepcion: widget.recepcion,
-                                                )));
-                                  },
-                                ),
-                              )
-                            : Container(),
+                        
                         widget.recepcion.getEstadoActual.name == "CANCELADO"
                             ? Padding(
                                 padding: const EdgeInsets.all(8.0),

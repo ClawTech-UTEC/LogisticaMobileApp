@@ -56,7 +56,7 @@ class _LoginState extends State<Login> {
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'El Email es requerido';
-                              } else if (!EmailValidator.validate(value)) {
+                              } else if (!EmailValidator.validate(value!.trim().toLowerCase())) {
                                 return 'El Email no es valido';
                               } else {
                                 return null;
@@ -86,7 +86,7 @@ class _LoginState extends State<Login> {
                               onPressed: () {
                                 if (_loginFormKey.currentState!.validate()) {
                                   viewModel.onLoginButtonPressed(
-                                      emailController.text,
+                                      emailController.text.toLowerCase().trim(),
                                       passwordController.text);
                                 }
                               },

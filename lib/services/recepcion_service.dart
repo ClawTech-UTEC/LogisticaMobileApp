@@ -18,14 +18,14 @@ class RecepcionService {
   factory RecepcionService() => _instance;
   RecepcionService.internal();
 
-  Future<Recepcion> createRec(Recepcion recepcion, Usuario usuario) async {
+  Future<Recepcion> createRec(Recepcion recepcion) async {
     print("-----");
     print(recepcion.toJson());
     print("-----");
     
 
     final response = await http.post(
-      Uri.parse(apiBaseUrl + '/recepcion'),
+      Uri.parse(apiBaseUrl + '/recepcion/'),
       body: jsonEncode(recepcion.toJson()),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',

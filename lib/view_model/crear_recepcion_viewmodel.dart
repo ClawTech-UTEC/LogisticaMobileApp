@@ -96,23 +96,21 @@ class CrearRecepcionViewModel
 
   void confirmarRecepcion(
       ConfirmarRecepcionEvent event, Emitter<CrearRecepcionState> emit) async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    print("ConfirmarRecepcionEvent" + state.toString());
-    state.recepcion.fechaRecepcion = DateTime.now();
-    state.recepcion.provedor = state.selectedProvedor;
-
-    state.recepcion.estadoRecepcion = [
-      EstadoRecepcion(recepcion: state.recepcion, fecha: DateTime.now())
-    ];
     SharedPreferences prefs = await SharedPreferences.getInstance();
     AuthJwtData authData =
         AuthJwtData.fromJson(jsonDecode(prefs.getString("authData")!));
 
     Usuario usuario =
         Usuario(email: authData.email, idUsuario: authData.idUsuario);
+    print("ConfirmarRecepcionEvent" + state.toString());
+    state.recepcion.fechaRecepcion = DateTime.now();
+    state.recepcion.provedor = state.selectedProvedor;
 
-    Recepcion recepcion =
-        await recepcionService.createRec(state.recepcion, usuario);
+    state.recepcion.estadoRecepcion = [
+      EstadoRecepcion(recepcion: state.recepcion, fecha: DateTime.now(), usuario: usuario)
+    ];
+
+    Recepcion recepcion = await recepcionService.createRec(state.recepcion);
 
     //TODO: controlar exepciones al crear una
     emit(CrearRecepcionRecepcionCreadaState(recepcion: recepcion));

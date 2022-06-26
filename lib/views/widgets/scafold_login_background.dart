@@ -28,7 +28,7 @@ class _ScaffoldLoginBackgroundState extends State<ScaffoldLoginBackground> {
                           FittedBox(
                             fit: BoxFit.fitWidth,
                             child: Text(
-                              'Clawtech Logistica App',
+                              'iLog Logistica App',
                               style: Theme.of(context).textTheme.headline4,
                             ),
                           ),

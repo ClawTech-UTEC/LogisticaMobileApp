@@ -1,3 +1,4 @@
+import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:clawtech_logistica_app/models/producto.dart';
 import 'package:clawtech_logistica_app/models/provedor.dart';
 import 'package:clawtech_logistica_app/models/tipo_producto.dart';
@@ -6,7 +7,10 @@ import 'package:clawtech_logistica_app/services/stock_service.dart';
 import 'package:clawtech_logistica_app/utils/confirmation_diolog.dart';
 import 'package:clawtech_logistica_app/view_model/crear_recepcion_viewmodel.dart';
 import 'package:clawtech_logistica_app/view_model/events/crear_recepcion_events.dart';
+import 'package:clawtech_logistica_app/views/widgets/barcode_search_textform.dart';
+import 'package:clawtech_logistica_app/views/widgets/dropdown_con_cb.dart';
 import 'package:dropdown_search/dropdown_search.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -33,6 +37,7 @@ class _CrearRecepcionFormState extends State<CrearRecepcionForm> {
   TipoProducto? _selectedTipoProducto;
   Provedor? _selectedProvedor;
   TextEditingController _cantidadController = TextEditingController();
+  TextEditingController _codigoBarrasController = TextEditingController();
   Key _key = UniqueKey();
   late String _estado;
 
@@ -99,47 +104,20 @@ class _CrearRecepcionFormState extends State<CrearRecepcionForm> {
                                     MediaQuery.of(context).size.height * 0.1,
                                 // width: MediaQuery.of(context).size.width * 0.6,
                                 child: FormField(
-                                  key: _key,
-                                  builder:
-                                      (FormFieldState<dynamic> fieldState) =>
-                                          DropdownSearch<TipoProducto>(
-                                    selectedItem: _selectedTipoProducto,
-                                    popupProps:
-                                        PopupProps.menu(showSearchBox: true),
-                                    validator: (value) => value == null
-                                        ? 'Debe seleccionar un Producto'
-                                        : null,
-                                    dropdownSearchDecoration: InputDecoration(
-                                      labelText: 'Producto',
-                                    ),
-                                    onChanged: (x) {
-                                      _selectedTipoProducto = x as TipoProducto;
-                                    },
-                                    items: widget.tipoProductos,
-                                    itemAsString: (item) => item.nombre,
-                                  ),
-                                ),
+                                    key: _key,
+                                    builder: (FormFieldState<dynamic>
+                                            fieldState) =>
+                                        DropDownConLectorCodigoDeBarras(
+                                          selectedTipoProducto:
+                                              _selectedTipoProducto,
+                                          tipoProductos: widget.tipoProductos,
+                                          onResult: (x) {
+                                            _selectedTipoProducto =
+                                                x as TipoProducto;
+                                          },
+                                          
+                                        )),
                               ),
-
-                              // DropdownButtonFormField(
-                              //   key: _key,
-                              //   validator: (value) => value == null
-                              //       ? 'Debe seleccionar un Provedor'
-                              //       : null,
-                              //   decoration: InputDecoration(
-                              //     labelText: 'Tipo De Producto',
-                              //   ),
-                              //   onChanged: (x) {
-                              //     _selectedTipoProducto = x as TipoProducto;
-                              //   },
-                              //   value: _selectedTipoProducto,
-                              //   items: widget.tipoProductos
-                              //       .map((tipoProducto) => DropdownMenuItem(
-                              //             child: Text(tipoProducto.nombre),
-                              //             value: tipoProducto,
-                              //           ))
-                              //       .toList(),
-                              // ),
                               TextFormField(
                                 controller: _cantidadController,
                                 decoration: InputDecoration(
@@ -199,7 +177,11 @@ class _CrearRecepcionFormState extends State<CrearRecepcionForm> {
                     ),
                   ),
                   onPressed: () {
-                    confirmarcionDiolog(context: context, title: "¿Confirma crear recepcion?", onConfirm:()=> widget.viewModel.add(ConfirmarRecepcionEvent()));	
+                    confirmarcionDiolog(
+                        context: context,
+                        title: "¿Confirma crear recepcion?",
+                        onConfirm: () =>
+                            widget.viewModel.add(ConfirmarRecepcionEvent()));
                   },
                   child: Container(
                       width: MediaQuery.of(context).size.width,

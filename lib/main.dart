@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
           primarySwatch: Colors.red,
           accentColor: Colors.blue,
-          backgroundColor: Colors.red[300],
+          backgroundColor: Color.fromRGBO(229, 115, 115, 1),
           splashColor: Colors.white,
           textTheme: GoogleFonts.robotoTextTheme(textTheme).copyWith(
               bodyMedium: TextStyle(color: Colors.black),

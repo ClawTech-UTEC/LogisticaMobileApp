@@ -1,3 +1,4 @@
+import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:clawtech_logistica_app/models/producto.dart';
 import 'package:clawtech_logistica_app/services/producto_service.dart';
 import 'package:clawtech_logistica_app/services/stock_service.dart';
@@ -9,9 +10,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class AgregarProductosPedidoForm extends StatelessWidget {
-  const AgregarProductosPedidoForm
-  ({
+class AgregarProductosPedidoForm extends StatefulWidget {
+  const AgregarProductosPedidoForm({
     Key? key,
     required GlobalKey<FormState> formKey,
     required this.viewModel,
@@ -25,62 +25,105 @@ class AgregarProductosPedidoForm extends StatelessWidget {
   final TextEditingController _cantidadController;
 
   @override
+  State<AgregarProductosPedidoForm> createState() =>
+      _AgregarProductosPedidoFormState();
+}
+
+class _AgregarProductosPedidoFormState
+    extends State<AgregarProductosPedidoForm> {
+  Producto? _producto;
+
+  @override
   Widget build(BuildContext context) {
     return Container(
-     height: MediaQuery.of(context).size.height * 0.65,
-     width: double.maxFinite,
+      height: MediaQuery.of(context).size.height * 0.65,
+      width: double.maxFinite,
       child: Card(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
               Form(
-                key: _formKey,
+                key: widget._formKey,
                 child: Column(
                   children: [
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
+                      child: 
                           Container(
-                            height: MediaQuery.of(context).size.height * 0.1,
-                            width: MediaQuery.of(context).size.width * 0.6,
+                            height: MediaQuery.of(context).size.height * 0.15,
+                            width: MediaQuery.of(context).size.width * 0.7,
                             child: DropdownSearch<Producto>(
                               popupProps: PopupProps.menu(showSearchBox: true),
                               validator: (value) => value == null
                                   ? 'Debe seleccionar un Producto'
                                   : null,
                               dropdownSearchDecoration: InputDecoration(
-                                labelText: 'Producto',
-                              ),
+                                  labelText: 'Producto',
+                                  icon: IconButton(
+                                      icon: Icon(CupertinoIcons.barcode, size: 48),
+                                      onPressed: () async {
+                                        String barcodeScannerResult =
+                                            await BarcodeScanner.scan(
+                                                options:
+                                                    ScanOptions(strings: const {
+                                          "cancel": "Cancelar",
+                                          "flash_on": "Flash",
+                                          "flash_off": "Flash",
+                                        })).then((value) => value.rawContent);
+
+                                        widget.viewModel.state.productos
+                                            .forEach((element) {
+                                          if (element
+                                                  .tipoProducto.codigoDeBarras
+                                                  .toString() ==
+                                              barcodeScannerResult) {
+                                            print("Producto" +
+                                                barcodeScannerResult);
+                                            _producto = element;
+                                            setState(() {});
+                                            widget.viewModel.add(
+                                                CrearPedidoEventSeleccionarProducto(
+                                                    producto: element));
+                                          } else {
+                                            Scaffold.of(context).showSnackBar(
+                                              SnackBar(
+                                                backgroundColor:
+                                                    Theme.of(context)
+                                                        .accentColor,
+                                                content: Text(
+                                                    'No se encontro producto'),
+                                              ),
+                                            );
+                                          }
+                                        });
+                                      })),
                               onChanged: (x) {
-                                viewModel.add(CrearPedidoEventSeleccionarProducto(
-                                    producto: x as Producto));
+                                widget.viewModel.add(
+                                    CrearPedidoEventSeleccionarProducto(
+                                        producto: x as Producto));
                               },
+                              selectedItem: _producto,
                               itemAsString: (item) => item.tipoProducto.nombre,
-                               asyncItems: (searchValue) async {
+                              asyncItems: (searchValue) async {
                                 return searchValue.isNotEmpty
                                     ? await StockService()
-                                        .searchProductStockByNameOrCodigoDeBarras(searchValue, int.tryParse(searchValue))
-                                    : viewModel.state.productos;
+                                        .searchProductStockByNameOrCodigoDeBarras(
+                                            searchValue,
+                                            int.tryParse(searchValue))
+                                    : widget.viewModel.state.productos;
                               },
                             ),
-                          ),
-                          Center(
-                            child: IconButton(
-                              iconSize: 48,
-                              icon: Icon(CupertinoIcons.barcode),
-                              onPressed: () {},
-                            ),
-                          ),
-                        ],
+                          
+                         
+                        
                       ),
                     ),
                     Text(
-                        "Disponible: ${viewModel.state.productoSeleccionado?.cantidadDisponible.toString() ?? ""}",
+                        "Disponible: ${widget.viewModel.state.productoSeleccionado?.cantidadDisponible.toString() ?? ""}",
                         style: Theme.of(context).textTheme.bodyMedium),
                     TextFormField(
-                      controller: _cantidadController,
+                      controller: widget._cantidadController,
                       keyboardType: TextInputType.number,
                       inputFormatters: <TextInputFormatter>[
                         FilteringTextInputFormatter.digitsOnly
@@ -90,9 +133,9 @@ class AgregarProductosPedidoForm extends StatelessWidget {
                       ),
                       onChanged: (value) {
                         if (double.parse(value) >
-                            viewModel
-                                .state.productoSeleccionado!.cantidadDisponible) {
-                          _cantidadController.text = viewModel
+                            widget.viewModel.state.productoSeleccionado!
+                                .cantidadDisponible) {
+                          widget._cantidadController.text = widget.viewModel
                               .state.productoSeleccionado!.cantidadDisponible
                               .toString();
                         }
@@ -106,16 +149,21 @@ class AgregarProductosPedidoForm extends StatelessWidget {
                     ),
                     ElevatedButton(
                         onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            viewModel.add(CrearPedidoEventAgregarProducto(
-                              producto: viewModel.state.productoSeleccionado!,
-                              cantidad: int.parse(_cantidadController.text),
+                          if (widget._formKey.currentState!.validate()) {
+                            widget.viewModel
+                                .add(CrearPedidoEventAgregarProducto(
+                              producto:
+                                  widget.viewModel.state.productoSeleccionado!,
+                              cantidad:
+                                  int.parse(widget._cantidadController.text),
                             ));
                           }
                         },
                         child: Text("Agregar Producto")),
-                    _createPedidoProductsDataTable(
-                        viewModel.state.cantidadPorProducto),
+                    FittedBox(
+                      child: _createPedidoProductsDataTable(
+                          widget.viewModel.state.cantidadPorProducto),
+                    ),
                   ],
                 ),
               ),
