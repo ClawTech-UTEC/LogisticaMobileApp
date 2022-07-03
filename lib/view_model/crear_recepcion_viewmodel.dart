@@ -107,7 +107,8 @@ class CrearRecepcionViewModel
     state.recepcion.provedor = state.selectedProvedor;
 
     state.recepcion.estadoRecepcion = [
-      EstadoRecepcion(recepcion: state.recepcion, fecha: DateTime.now(), usuario: usuario)
+      EstadoRecepcion(
+          recepcion: state.recepcion, fecha: DateTime.now(), usuario: usuario)
     ];
 
     Recepcion recepcion = await recepcionService.createRec(state.recepcion);

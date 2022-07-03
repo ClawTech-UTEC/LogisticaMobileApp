@@ -32,8 +32,6 @@ class CrearPedidoViewModel extends Bloc<CrearPedidoEvent, CrearPedidoState> {
   StockService stockService = StockService();
   PedidosService pedidosService = PedidosService();
   void onLoad(CrearPedidoEvent event, Emitter<CrearPedidoState> emit) async {
-    print("cargando crear pedidos page ");
-    // List<Cliente> clientes = await clienteService.getAllClientes();
     List<Producto> productos = await stockService.getProductosDisponibles();
     Map<Producto, double> productosPedido = Map<Producto, double>();
     Cliente cliente = Cliente();

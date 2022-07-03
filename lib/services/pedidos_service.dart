@@ -64,12 +64,6 @@ class PedidosService {
         'Content-Type': 'application/json; charset=UTF-8',
       },
     );
-    print("--------BODY-----------------");
-    print(response.body);
-    print("--------STATUS---------------");
-
-    print(response.statusCode);
-    print("-------------------------");
     if (response.statusCode == 201) {
       return Pedido.fromJson(json.decode(response.body));
     } else {
