@@ -62,7 +62,9 @@ class _DropDownConLectorCodigoDeBarrasState
                 });
               })),
       onChanged: (x) {
+        print("Producto" + x.toString());
         widget.selectedTipoProducto = x as TipoProducto;
+        widget.onResult!(widget.selectedTipoProducto!);
       },
       items: widget.tipoProductos,
       itemAsString: (item) => item.nombre,

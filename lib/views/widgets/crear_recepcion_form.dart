@@ -112,6 +112,7 @@ class _CrearRecepcionFormState extends State<CrearRecepcionForm> {
                                               _selectedTipoProducto,
                                           tipoProductos: widget.tipoProductos,
                                           onResult: (x) {
+                                            print("resultado: $x");
                                             _selectedTipoProducto =
                                                 x as TipoProducto;
                                           },
