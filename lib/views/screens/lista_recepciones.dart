@@ -51,6 +51,20 @@ class _ListadoRecepcionesState extends State<ListadoRecepciones> {
                                         "recepciones_card${state.recepciones[index].idRecepcion}",
                                     child: ListTile(
                                       tileColor: Colors.white,
+                                      leading: Container(
+                                        width: 50,
+                                        height: 50,
+                                        decoration: BoxDecoration(
+                                            color: Colors.blue,
+                                            shape: BoxShape.circle),
+                                        child: Center(
+                                          child: Text(
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .headlineSmall,
+                                              "${state.recepciones[index].idRecepcion}"),
+                                        ),
+                                      ),
                                       title: Text(
                                           'Recepcion ${state.recepciones[index].idRecepcion}'),
                                       subtitle: Text(

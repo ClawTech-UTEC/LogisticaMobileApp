@@ -56,10 +56,31 @@ class _ListadoPedidosState extends State<ListadoPedidos> {
                                         "pedidos_card${state.pedidos[index].idPedido}",
                                     child: ListTile(
                                       tileColor: Colors.white,
+                                      leading: Container(
+                                        width: 50,
+                                        height: 50,
+                                        decoration: BoxDecoration(
+                                            color: Colors.blue,
+                                            shape: BoxShape.circle),
+                                        child: Center(
+                                            child: Text( style :Theme.of(context).textTheme.headlineSmall,
+                                                "${state.pedidos[index].idPedido}"),
+                                            ),
+                                      ),
                                       title: Text(
                                           'Pedido: ${state.pedidos[index].idPedido}'),
-                                      subtitle: Text(
-                                          'Estado: ${state.pedidos[index].estadoPedido.last.tipoEstadoPedido.name}'),
+                                      subtitle: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          SizedBox(height: 10),
+                                          Text(
+                                              'Estado: ${state.pedidos[index].estadoPedido.last.tipoEstadoPedido.name}'),
+                                          SizedBox(height: 10),
+                                          Text(
+                                              "Cliente: ${state.pedidos[index].cliente.nombre}")
+                                        ],
+                                      ),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(10),
                                       ),
