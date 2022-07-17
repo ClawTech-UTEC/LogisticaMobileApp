@@ -5,13 +5,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class DropDownConLectorCodigoDeBarras extends StatefulWidget {
-  DropDownConLectorCodigoDeBarras(
-      {Key? key,
-      required this.selectedTipoProducto,
-      required this.tipoProductos,
-      this.onResult,
-      })
-      : super(key: key);
+  DropDownConLectorCodigoDeBarras({
+    Key? key,
+    required this.selectedTipoProducto,
+    required this.tipoProductos,
+    this.onResult,
+  }) : super(key: key);
   TipoProducto? selectedTipoProducto;
   List<TipoProducto> tipoProductos;
   Function(TipoProducto result)? onResult;
@@ -32,7 +31,7 @@ class _DropDownConLectorCodigoDeBarrasState
       dropdownSearchDecoration: InputDecoration(
           labelText: 'Producto',
           icon: IconButton(
-              icon: Icon(CupertinoIcons.barcode),
+              icon: Icon(CupertinoIcons.barcode, size: 48),
               onPressed: () async {
                 String barcodeScannerResult = await BarcodeScanner.scan(
                     options: ScanOptions(strings: const {
@@ -40,6 +39,7 @@ class _DropDownConLectorCodigoDeBarrasState
                   "flash_on": "Flash",
                   "flash_off": "Flash",
                 })).then((value) => value.rawContent);
+                bool encontrado = false;
 
                 widget.tipoProductos.forEach((element) {
                   if (element.codigoDeBarras.toString() ==
@@ -51,15 +51,25 @@ class _DropDownConLectorCodigoDeBarrasState
                     widget.onResult != null
                         ? widget.onResult!(widget.selectedTipoProducto!)
                         : null;
-                  } else {
+                    encontrado = true;
                     Scaffold.of(context).showSnackBar(
                       SnackBar(
                         backgroundColor: Theme.of(context).accentColor,
-                        content: Text('No se encontro producto'),
+                        content: Text('Producto Encontrado'),
                       ),
                     );
+                    return;
                   }
                 });
+
+                if (!encontrado) {
+                  Scaffold.of(context).showSnackBar(
+                    SnackBar(
+                      backgroundColor: Theme.of(context).accentColor,
+                      content: Text('No se encontro producto'),
+                    ),
+                  );
+                }
               })),
       onChanged: (x) {
         print("Producto" + x.toString());

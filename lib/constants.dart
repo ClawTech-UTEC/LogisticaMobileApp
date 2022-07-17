@@ -8,6 +8,8 @@ import 'package:clawtech_logistica_app/models/subcategoria.dart';
 
 
 const bool local = true;
-const String apiBaseUrl = local ? "http://192.168.1.7:8081/api" : "https://clawtech-logistica-proyecto.ue.r.appspot.com/api"; 
+const String apiBaseUrl = local ? "http://192.168.1.7:8081/api" 
+
+: "https://clawtech-logistica-proyecto.ue.r.appspot.com/api"; 
 
 

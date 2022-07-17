@@ -122,7 +122,7 @@ class _EntregarPedidoScrenState extends State<EntregarPedidoScren> {
                                     onPressed: () {
                                       confirmarcionDiolog(
                                           context: context,
-                                          title: 'Confirmar Despacho',
+                                          title: 'Confirmar Entrega',
                                           onConfirm: () {
                                             viewModel.add(
                                                 EntregarPedidoEventConfirmarPedido());

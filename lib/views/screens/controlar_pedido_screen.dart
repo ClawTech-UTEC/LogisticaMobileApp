@@ -43,12 +43,25 @@ class _ControlarPedidoScreenState extends State<ControlarPedidoScreen> {
                 ),
               );
             }
+
+            if (state.status == ControlarPedidoStateEnum.PRODUCTOAGREGADO) {
+              Scaffold.of(context).showSnackBar(
+                SnackBar(
+                  backgroundColor: Theme.of(context).accentColor,
+                  content: Text('Producto agregado'),
+                ),
+              );
+            }
             if (state.status == ControlarPedidoStateEnum.COMPLETED) {
+              
+
               Navigator.push(
                 context,
                 MaterialPageRoute<void>(
                     builder: (BuildContext context) => HomePage()),
               );
+
+             
             }
           },
           child: BlocBuilder(
@@ -208,7 +221,7 @@ List<DataRow> _controllRecepctionProductsRows(List<PedidoProducto> productos,
             decoration: InputDecoration(),
             keyboardType: TextInputType.number,
             inputFormatters: <TextInputFormatter>[
-              FilteringTextInputFormatter.digitsOnly
+              // FilteringTextInputFormatter.digitsOnly
             ],
           ),
           showEditIcon: true)

@@ -75,124 +75,114 @@ class _CardDetallePedidoState extends State<CardDetallePedido> {
                   ])
                 ],
               )),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              ElevatedButton(
-                child: Text('Inicio'),
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              DashboardPage())); // Navigator.push(
-                  //     context,
-                  //     MaterialPageRoute(
-                  //         builder: (context) => ControllarPedidoScreen(
-                  //               Pedido: widget.Pedido,
-                  //             )));
-                },
-              ),
-              widget.pedido.getEstadoActual.name == "PENDIENTE"
-                  ? ElevatedButton(
-                      child: Text('Preparar'),
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => PrepararPedidoScreen(
-                                      pedido: widget.pedido,
-                                    )));
-                      },
-                    )
-                  : Container(),
-              widget.pedido.getEstadoActual.name == "PREPARADO"
-                  ? ElevatedButton(
-                      child: Text('Controlar'),
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ControlarPedidoScreen(
-                                      pedido: widget.pedido,
-                                    )));
-                      },
-                    )
-                  : Container(),
-              widget.pedido.getEstadoActual.name == "CONTROLADO"
-                  ? ElevatedButton(
-                      child: Text('Despachar'),
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => DespacharPedidoScren(
-                                      pedido: widget.pedido,
-                                    )));
-                      },
-                    )
-                  : Container(),
-              widget.pedido.getEstadoActual.name == "DESPACHADO"
-                  ? ElevatedButton(
-                      child: Text('Entregar'),
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => EntregarPedidoScren(
-                                    pedido: widget.pedido)));
-                      },
-                    )
-                  : Container(),
-              widget.pedido.getEstadoActual.name != "CANCELADO"
-                  ? ElevatedButton(
-                      child: Text('Cancelar'),
-                      onPressed: () {
-                        confirmarcionDiolog(
-                            context: context,
-                            title: '¿Confirmar Cancelar el Pedido?',
-                            onConfirm: () {
-                              widget.detallePedidoViewModel
-                                  .cancelarPedido(widget.pedido);
-
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => DashboardPage()));
-                            });
-                      },
-                    )
-                  : Container(),
-
-                    widget.pedido.getEstadoActual.name == "ENTREGADO"
-                  ? ElevatedButton(
-                      child: Text('Devolver'),
-                      onPressed: () {
-                        confirmarcionDiolog(
-                            context: context,
-                            title: '¿Confirmar Devolver el Pedido?',
-                            onConfirm: () async {
-                          await    widget.detallePedidoViewModel
-                                  .devolverPedido(widget.pedido);
-
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => DashboardPage()));
-                            });
-                      },
-                    )
-                  : Container(),
-              // ElevatedButton(
-              //   child: Text('Compartir'),
-              //   onPressed: () {
-              //     Navigator.pop(context);
-              //   },
-              // ),
-            ],
-          ),
+          botonesDetallePedido( widget.pedido, context, widget.detallePedidoViewModel),
         ],
       ),
     );
   }
+}
+
+Widget botonesDetallePedido(Pedido pedido, context, DetallePedidoViewModel  detallePedidoViewModel) {
+  List<Widget> botones = [];
+
+  botones.add(ElevatedButton(
+    child: Text('Inicio'),
+    onPressed: () {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => DashboardPage())); // Navigator.push(
+      //     context,
+      //     MaterialPageRoute(
+      //         builder: (context) => ControllarPedidoScreen(
+      //               Pedido: widget.Pedido,
+      //             )));
+    },
+  ));
+
+  if (pedido.getEstadoActual.name == "PENDIENTE") {
+    botones.add(ElevatedButton(
+      child: Text('Preparar'),
+      onPressed: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => PrepararPedidoScreen(
+                      pedido: pedido,
+                    )));
+      },
+    ));
+  }
+  if (pedido.getEstadoActual.name == "PREPARADO") {
+    botones.add(ElevatedButton(
+      child: Text('Controlar'),
+      onPressed: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ControlarPedidoScreen(
+                      pedido: pedido,
+                    )));
+      },
+    ));
+  }
+  if (pedido.getEstadoActual.name == "CONTROLADO") {
+    botones.add(ElevatedButton(
+      child: Text('Despachar'),
+      onPressed: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => DespacharPedidoScren(
+                      pedido: pedido,
+                    )));
+      },
+    ));
+  }
+  if (pedido.getEstadoActual.name == "DESPACHADO") {
+    botones.add(ElevatedButton(
+      child: Text('Entregar'),
+      onPressed: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => EntregarPedidoScren(pedido: pedido)));
+      },
+    ));
+  }
+  if (pedido.getEstadoActual.name != "CANCELADO") {
+    botones.add(ElevatedButton(
+       
+      child: Text('Cancelar'),
+      onPressed: () {
+        confirmarcionDiolog(
+            context: context,
+            title: '¿Confirmar Cancelar el Pedido?',
+            onConfirm: () {
+              detallePedidoViewModel.cancelarPedido(pedido);
+
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => DashboardPage()));
+            });
+      },
+    ));
+  }
+  if (pedido.getEstadoActual.name == "ENTREGADO") {
+    botones.add(ElevatedButton(
+      child: Text('Devolver'),
+     onPressed: () {
+        confirmarcionDiolog(
+            context: context,
+            title: '¿Confirmar Devolver el Pedido?',
+            onConfirm: () async {
+              await detallePedidoViewModel.devolverPedido(pedido);
+
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => DashboardPage()));
+            });
+      },
+    ));
+  }
+  return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: botones);
 }

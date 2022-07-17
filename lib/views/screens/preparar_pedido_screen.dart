@@ -48,6 +48,15 @@ class _PrepararPedidoScreenState extends State<PrepararPedidoScreen> {
                     builder: (BuildContext context) => HomePage()),
               );
             }
+
+               if (state.status == PrepararPedidoStateEnum.PRODUCTOAGREGADO) {
+              Scaffold.of(context).showSnackBar(
+                SnackBar(
+                  backgroundColor: Theme.of(context).accentColor,
+                  content: Text('Producto Agregado'),
+                ),
+              );
+            }
           },
           child: BlocBuilder(
               bloc: viewModel
@@ -94,26 +103,28 @@ class _PrepararPedidoScreenState extends State<PrepararPedidoScreen> {
                                 Theme.of(context).accentColor,
                               )),
                               onPressed: (() => {
-                             if(  _formKey.currentState!.validate())     
-                                         {
-                                            confirmarcionDiolog(
-                                                onConfirm: () {
-                                                  viewModel.add(
-                                                      PrepararPedidoEventConfirmarPedido());
-                                                },
-                                                context: context,
-                                                title:
-                                                    "¿Confirma preparar el pedido?")
-                                          }
-                                        else{
-
-                                          Scaffold.of(context).showSnackBar(
-                                            SnackBar(
-                                              backgroundColor: Theme.of(context).accentColor,
-                                              content: Text('Los datos no coinciden'),
-                                            ),
-                                          )
-                                        }
+                                    if (_formKey.currentState!.validate())
+                                      {
+                                        confirmarcionDiolog(
+                                            onConfirm: () {
+                                              viewModel.add(
+                                                  PrepararPedidoEventConfirmarPedido());
+                                            },
+                                            context: context,
+                                            title:
+                                                "¿Confirma preparar el pedido?")
+                                      }
+                                    else
+                                      {
+                                        Scaffold.of(context).showSnackBar(
+                                          SnackBar(
+                                            backgroundColor:
+                                                Theme.of(context).accentColor,
+                                            content:
+                                                Text('Los datos no coinciden'),
+                                          ),
+                                        )
+                                      }
                                   }),
                               child: Text("Aceptar"),
                             ),
@@ -149,8 +160,11 @@ List<DataColumn> _controllRecepctionProductsColumns() {
 
 List<DataRow> _controllRecepctionProductsRows(List<PedidoProducto> productos,
     List<TextEditingController> controllersCantidadIngresada) {
-  TextEditingController _textEditing = TextEditingController();
   return productos.map((entry) {
+    print(productos.indexOf(entry));
+
+    TextEditingController controller = controllersCantidadIngresada[
+        productos.indexOf(entry)];
     return DataRow(cells: [
       DataCell(Text('${entry.producto.nombre}')),
       DataCell(Text('${entry.producto.codigoDeBarras}')),
@@ -166,12 +180,12 @@ List<DataRow> _controllRecepctionProductsRows(List<PedidoProducto> productos,
               }
               return null;
             },
-            controller: controllersCantidadIngresada[productos.indexOf(entry)],
+            controller: controller,
             //  initialValue: '${entry.value}',
             decoration: InputDecoration(),
             keyboardType: TextInputType.number,
             inputFormatters: <TextInputFormatter>[
-              FilteringTextInputFormatter.digitsOnly
+              // FilteringTextInputFormatter.digitsOnly
             ],
           ),
           showEditIcon: true)

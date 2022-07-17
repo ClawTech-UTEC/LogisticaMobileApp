@@ -38,8 +38,9 @@ class ControlRecepcionViewModel
       cantidadRecividaPorProducto[producto] = 0;
     });
 
-    List<TextEditingController> tableController = List.filled(
-        event.recepcion.productos.length, TextEditingController(text: "0"));
+    List<TextEditingController> tableController = List.generate(
+        event.recepcion.productos.length,
+        (i) => new TextEditingController(text: "0"));
 
     emit(state.copyWith(
       status: ControlRecepcionStateEnum.LOADED,
@@ -62,7 +63,7 @@ class ControlRecepcionViewModel
       double cantidadOrinal = double.parse(state.tableController[index].text);
       state.tableController[index].text = (cantidadOrinal + 1).toString();
       emit(state.copyWith(
-        status: ControlRecepcionStateEnum.LOADED,
+        status: ControlRecepcionStateEnum.PRODUCTOAGREGADO,
       ));
     } catch (e) {
       print(e);
@@ -86,7 +87,7 @@ class ControlRecepcionViewModel
         tableController.length,
         (index) => tableController[index].text.isEmpty
             ? 0
-            : double.parse(tableController[index].text));
+            : double.tryParse(tableController[index].text)??0.0);
 
     List<RecepcionProducto> productos = state.recepcion!.productos;
 

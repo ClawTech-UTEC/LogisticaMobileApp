@@ -49,74 +49,70 @@ class _AgregarProductosPedidoFormState
                   children: [
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
-                      child: 
-                          Container(
-                            height: MediaQuery.of(context).size.height * 0.15,
-                            width: MediaQuery.of(context).size.width * 0.7,
-                            child: DropdownSearch<Producto>(
-                              popupProps: PopupProps.menu(showSearchBox: true),
-                              validator: (value) => value == null
-                                  ? 'Debe seleccionar un Producto'
-                                  : null,
-                              dropdownSearchDecoration: InputDecoration(
-                                  labelText: 'Producto',
-                                  icon: IconButton(
-                                      icon: Icon(CupertinoIcons.barcode, size: 48),
-                                      onPressed: () async {
-                                        String barcodeScannerResult =
-                                            await BarcodeScanner.scan(
-                                                options:
-                                                    ScanOptions(strings: const {
-                                          "cancel": "Cancelar",
-                                          "flash_on": "Flash",
-                                          "flash_off": "Flash",
-                                        })).then((value) => value.rawContent);
+                      child: Container(
+                        height: MediaQuery.of(context).size.height * 0.15,
+                        width: MediaQuery.of(context).size.width * 0.7,
+                        child: DropdownSearch<Producto>(
+                          popupProps: PopupProps.menu(showSearchBox: true),
+                          validator: (value) => value == null
+                              ? 'Debe seleccionar un Producto'
+                              : null,
+                          dropdownSearchDecoration: InputDecoration(
+                              labelText: 'Producto',
+                              icon: IconButton(
+                                  icon: Icon(CupertinoIcons.barcode, size: 48),
+                                  onPressed: () async {
+                                    String barcodeScannerResult =
+                                        await BarcodeScanner.scan(
+                                            options:
+                                                ScanOptions(strings: const {
+                                      "cancel": "Cancelar",
+                                      "flash_on": "Flash",
+                                      "flash_off": "Flash",
+                                    })).then((value) => value.rawContent);
+                                    bool encontrado = false;
+                                    widget.viewModel.state.productos
+                                        .forEach((element) {
+                                      if (element.tipoProducto.codigoDeBarras
+                                              .toString() ==
+                                          barcodeScannerResult) {
+                                        print(
+                                            "Producto" + barcodeScannerResult);
+                                        _producto = element;
+                                        setState(() {});
+                                        widget.viewModel.add(
+                                            CrearPedidoEventSeleccionarProducto(
+                                                producto: element));
+                                        encontrado = true;
+                                      }
+                                    });
 
-                                        widget.viewModel.state.productos
-                                            .forEach((element) {
-                                          if (element
-                                                  .tipoProducto.codigoDeBarras
-                                                  .toString() ==
-                                              barcodeScannerResult) {
-                                            print("Producto" +
-                                                barcodeScannerResult);
-                                            _producto = element;
-                                            setState(() {});
-                                            widget.viewModel.add(
-                                                CrearPedidoEventSeleccionarProducto(
-                                                    producto: element));
-                                          } else {
-                                            Scaffold.of(context).showSnackBar(
-                                              SnackBar(
-                                                backgroundColor:
-                                                    Theme.of(context)
-                                                        .accentColor,
-                                                content: Text(
-                                                    'No se encontro producto'),
-                                              ),
-                                            );
-                                          }
-                                        });
-                                      })),
-                              onChanged: (x) {
-                                widget.viewModel.add(
-                                    CrearPedidoEventSeleccionarProducto(
-                                        producto: x as Producto));
-                              },
-                              selectedItem: _producto,
-                              itemAsString: (item) => item.tipoProducto.nombre,
-                              asyncItems: (searchValue) async {
-                                return searchValue.isNotEmpty
-                                    ? await StockService()
-                                        .searchProductStockByNameOrCodigoDeBarras(
-                                            searchValue,
-                                            int.tryParse(searchValue))
-                                    : widget.viewModel.state.productos;
-                              },
-                            ),
-                          
-                         
-                        
+                                    if (!encontrado) {
+                                      Scaffold.of(context).showSnackBar(
+                                        SnackBar(
+                                          backgroundColor:
+                                              Theme.of(context).accentColor,
+                                          content:
+                                              Text('No se encontro producto'),
+                                        ),
+                                      );
+                                    }
+                                  })),
+                          onChanged: (x) {
+                            widget.viewModel.add(
+                                CrearPedidoEventSeleccionarProducto(
+                                    producto: x as Producto));
+                          },
+                          selectedItem: _producto,
+                          itemAsString: (item) => item.tipoProducto.nombre,
+                          asyncItems: (searchValue) async {
+                            return searchValue.isNotEmpty
+                                ? await StockService()
+                                    .searchProductStockByNameOrCodigoDeBarras(
+                                        searchValue, int.tryParse(searchValue))
+                                : widget.viewModel.state.productos;
+                          },
+                        ),
                       ),
                     ),
                     Text(
@@ -198,7 +194,7 @@ List<DataRow> _createPedidoProductsRows(Map<Producto, double> productos) {
         cells: [
           DataCell(Text(producto.tipoProducto.nombre)),
           DataCell(Text(cantidad.toString())),
-          DataCell(Text(producto.tipoProducto.precio.toString()))
+          DataCell(Text(producto.tipoProducto.precioDeVenta.toString()))
         ],
       )));
   return list;

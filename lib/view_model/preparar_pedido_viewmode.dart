@@ -32,8 +32,8 @@ class PrepararPedidoViewModel
       cantidadRecividaPorProducto[producto] = 0;
     });
 
-    List<TextEditingController> tableController = List.filled(
-        event.pedido.productos.length, TextEditingController(text: "0"));
+    List<TextEditingController> tableController = List.generate(
+        event.pedido.productos.length,(i) => new TextEditingController(text: "0"));
 
     emit(state.copyWith(
       status: PrepararPedidoStateEnum.LOADED,
@@ -56,7 +56,7 @@ class PrepararPedidoViewModel
       double cantidadOrinal = double.parse(state.tableController[index].text);
       state.tableController[index].text = (cantidadOrinal + 1).toString();
       emit(state.copyWith(
-        status: PrepararPedidoStateEnum.LOADED,
+        status: PrepararPedidoStateEnum.PRODUCTOAGREGADO,
       ));
     } catch (e) {
       print(e);

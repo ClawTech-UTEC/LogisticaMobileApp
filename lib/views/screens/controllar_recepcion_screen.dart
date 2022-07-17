@@ -47,7 +47,21 @@ class _ControllarRecepcionScreenState extends State<ControllarRecepcionScreen> {
                   content: Text('${state.error}'),
                 ),
               );
+        
+        
             }
+            if (state.status == ControlRecepcionStateEnum.PRODUCTOAGREGADO) {
+              Scaffold.of(context).showSnackBar(
+                SnackBar(
+                  backgroundColor: Theme.of(context).accentColor,
+                  content: Text('Producto Agregado'),
+                ),
+              );
+            }
+
+
+
+
             if (state.status == ControlRecepcionStateEnum.COMPLETED) {
               Navigator.push(
                 context,
@@ -215,6 +229,8 @@ List<DataRow> _controllRecepctionProductsRows(List<RecepcionProducto> productos,
       DataCell(Text('${entry.cantidad}')),
       DataCell(
           TextFormField(
+
+
             validator: (value) {
               print(value);
               if (value == null) {
@@ -227,10 +243,12 @@ List<DataRow> _controllRecepctionProductsRows(List<RecepcionProducto> productos,
             },
             controller: controllersCantidadIngresada[productos.indexOf(entry)],
             //  initialValue: '${entry.value}',
+           
             decoration: InputDecoration(),
             keyboardType: TextInputType.number,
             inputFormatters: <TextInputFormatter>[
-              FilteringTextInputFormatter.digitsOnly
+              // FilteringTextInputFormatter.digitsOnly,
+             
             ],
           ),
           showEditIcon: true)

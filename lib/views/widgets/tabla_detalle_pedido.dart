@@ -18,7 +18,7 @@ class TablaDetallePedido extends StatelessWidget {
             .map((producto) => DataRow(cells: [
                   DataCell(Text(producto.producto.nombre)),
                   DataCell(Text('${producto.cantidad}')),
-                  DataCell(Text('\$${producto.producto.precio}'))
+                  DataCell(Text('\$${producto.producto.precioDeVenta}'))
                 ]))
             .toList());
   }

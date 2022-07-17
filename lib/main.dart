@@ -30,6 +30,18 @@ class MyApp extends StatelessWidget {
           accentColor: Colors.blue,
           backgroundColor: Color.fromRGBO(229, 115, 115, 1),
           splashColor: Colors.white,
+          buttonTheme: ButtonThemeData(
+            buttonColor: Colors.blue,
+            textTheme: ButtonTextTheme.primary,
+
+          ),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(Colors.blue),
+            
+            ),
+          ),
+
           textTheme: GoogleFonts.robotoTextTheme(textTheme).copyWith(
               bodyMedium: TextStyle(color: Colors.black),
               bodySmall: TextStyle(color: Colors.black),

@@ -101,7 +101,7 @@ class _UbicarProductoScreenState extends State<UbicarProductoScreen> {
                         height: 200,
                         child: GridView.count(
                             scrollDirection: Axis.vertical,
-                            crossAxisCount: deposito.pasillos![0].espacio!.length,
+                            crossAxisCount: deposito.pasillos![0].espacio.length,
                             children:
                                 _buildGridTiles(deposito)),
                       ),
@@ -121,7 +121,7 @@ class _UbicarProductoScreenState extends State<UbicarProductoScreen> {
     List<Widget> list = [];
 
     for (Pasillo pasillo in deposito.pasillos!) {
-      for (Espacio espacio in pasillo.espacio!) {
+      for (Espacio espacio in pasillo.espacio) {
         list.add(ListTile(
           leading: Text(pasillo.nomPasillo + " - " + espacio.nomEspacio),
           title: Radio<Espacio>(

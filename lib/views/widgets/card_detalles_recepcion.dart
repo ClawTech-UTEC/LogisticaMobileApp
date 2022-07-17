@@ -94,99 +94,66 @@ class _CardDetallesRecepcionState extends State<CardDetallesRecepcion> {
                           ))),
                   FittedBox(
                     fit: BoxFit.fitWidth,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        widget.recepcion.getEstadoActual.name == "PENDIENTE"
-                            ? Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: ElevatedButton(
-                                  child: Text('Controlar'),
-                                  onPressed: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                ControllarRecepcionScreen(
-                                                  recepcion: widget.recepcion,
-                                                )));
-                                  },
-                                ),
-                              )
-                            : Container(),
-                        widget.recepcion.getEstadoActual.name == "RECIBIDO"
-                            ? Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: ElevatedButton(
-                                  child: Text('Ubicar en Depositar'),
-                                  onPressed: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                UbicarProductoScreen(
-                                                  recepcion: widget.recepcion,
-                                                )));
-                                  },
-                                ),
-                              )
-                            : Container(),
-                        
-                        widget.recepcion.getEstadoActual.name == "CANCELADO"
-                            ? Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: ElevatedButton(
-                                  child: Text('Inicio'),
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                ),
-                              )
-                            : Container(),
-                        widget.recepcion.getEstadoActual.name != "CANCELADO"
-                            ? Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: ElevatedButton(
-                                  child: Text('Cancelar'),
-                                  onPressed: () {
-                                    confirmarcionDiolog(
-                                        context: context,
-                                        title:
-                                            '¿Confirma cancelar la recepcion?',
-                                        onConfirm: () {
-                                          viewModel
-                                              .add(CancelarRecepcionEvent());
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      DashboardPage()));
-                                        });
-                                  },
-                                ),
-                              )
-                            : Container(),
-                        Container(),
-                        // Padding(
-                        //   padding: const EdgeInsets.all(8.0),
-                        //   child: ElevatedButton(
-                        //     child: Text('Compartir'),
-                        //     onPressed: () {
-                        //       Navigator.pop(context);
-                        //     },
-                        //   ),
-                        // ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+                    child: botonesRecepcionProducto(viewModel,widget.recepcion, context )
+            )]),
             );
           } else {
             return LoadingPage();
           }
         });
   }
+}
+
+Widget botonesRecepcionProducto(
+    DetalleRecepcionViewModel viewModel, Recepcion recepcion, context) {
+  List<Widget> botones = [];
+  botones.add(Padding(
+    padding: const EdgeInsets.all(8.0),
+    child: ElevatedButton(
+      child: Text('Inicio'),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    ),
+  ));
+
+  if (recepcion.getEstadoActual.name == "PENDIENTE") {
+    botones.add(Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ElevatedButton(
+        child: Text('Controlar'),
+        onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ControllarRecepcionScreen(
+                        recepcion: recepcion,
+                      )));
+        },
+      ),
+    ));
+  }
+
+  if (recepcion.getEstadoActual.name == "CANCELADO") {
+    botones.add(Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ElevatedButton(
+        child: Text('Inicio'),
+         onPressed: () {
+          confirmarcionDiolog(
+              context: context,
+              title: '¿Confirma cancelar la recepcion?',
+              onConfirm: () {
+                viewModel.add(CancelarRecepcionEvent());
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => DashboardPage()));
+              });
+        },
+      ),
+    ));
+  }
+
+  return Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: botones);
 }
 
 DataTable _createRecepctionProductsDataTable(

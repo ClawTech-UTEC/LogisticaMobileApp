@@ -29,4 +29,4 @@ class PrepararPedidoState {
   }
 }
 
-enum PrepararPedidoStateEnum { INITIAL, LOADED, ERROR, COMPLETED }
+enum PrepararPedidoStateEnum { INITIAL, LOADED, ERROR, COMPLETED, PRODUCTOAGREGADO }

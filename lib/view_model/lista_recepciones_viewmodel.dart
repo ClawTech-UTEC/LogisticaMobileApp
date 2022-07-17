@@ -17,6 +17,8 @@ class ListadoRecepcionesViewModel
   loadRecepciones(LoadListadoRecepciones event,
       Emitter<ListadoRecepcionesState> emit) async {
     List<Recepcion> recepciones = await recepcionService.getRecepciones();
+        recepciones = recepciones.reversed.toList();
+
     emit(state.copyWith(
         recepciones: recepciones, state: ListadoRecepcionesStateEnum.loaded));
   }
@@ -25,6 +27,7 @@ class ListadoRecepcionesViewModel
       Emitter<ListadoRecepcionesState> emit) async {
     List<Recepcion> recepciones = await recepcionService.getRecepciones();
     ; //TODO: obtener desde la api
+    recepciones = recepciones.reversed.toList();
 
     print(event.filterString);
     for (var element in recepciones) {

@@ -94,7 +94,7 @@ class CrearPedidoViewModel extends Bloc<CrearPedidoEvent, CrearPedidoState> {
       total: state.cantidadPorProducto.entries.fold(
           0,
           (previousValue, element) =>
-              (element.key.tipoProducto.precio * element.value) +
+              (element.key.tipoProducto.precioDeVenta * element.value) +
               previousValue),
       estadoPedido: [
         EstadoPedido(

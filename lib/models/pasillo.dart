@@ -21,6 +21,6 @@ class Pasillo {
   Map<String, dynamic> toJson() => {
         "idPasillo": idPasillo,
         "nomPasillo": nomPasillo,
-        "espacio":new List<dynamic>.from(espacio!.map((x) => x.toJson())),
+        "espacio":new List<dynamic>.from(espacio.map((x) => x.toJson())),
       };
 }

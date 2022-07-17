@@ -29,4 +29,5 @@ class ControlarPedidoState {
   }
 }
 
-enum ControlarPedidoStateEnum { INITIAL, LOADED, ERROR, COMPLETED }
+enum ControlarPedidoStateEnum { INITIAL, LOADED, ERROR, COMPLETED , PRODUCTOAGREGADO
+}

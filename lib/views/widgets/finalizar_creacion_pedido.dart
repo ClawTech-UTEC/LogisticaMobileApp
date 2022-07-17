@@ -97,7 +97,7 @@ List<DataRow> _createPedidoProductsRows(Map<Producto, double> productos) {
         cells: [
           DataCell(Text(producto.tipoProducto.nombre)),
           DataCell(Text(cantidad.toString())),
-          DataCell(Text(producto.tipoProducto.precio.toString()))
+          DataCell(Text(producto.tipoProducto.precioDeVenta.toString()))
         ],
       )));
   return list;

@@ -33,6 +33,7 @@ class _DashboardPageState extends State<DashboardPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        
         appBar: AppBar(
           elevation: 0,
           backgroundColor: Theme.of(context).backgroundColor,
@@ -49,6 +50,7 @@ class _DashboardPageState extends State<DashboardPage> {
               ];
             }, onSelected: (value) {
               if (value == 0) {
+                print("Salir");
                 BlocProvider.of<AuthenticationViewModel>(context)
                     .onSignOutButtonPressed();
               }

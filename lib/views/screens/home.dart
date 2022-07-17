@@ -13,7 +13,6 @@ import 'package:lottie/lottie.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
-
   @override
   State<HomePage> createState() => _HomePageState();
 }
@@ -28,6 +27,8 @@ class _HomePageState extends State<HomePage> {
     viewModel = BlocProvider.of<AuthenticationViewModel>(context);
     viewModel.initialAithentication();
   }
+
+  
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +50,7 @@ class _HomePageState extends State<HomePage> {
                         backgroundColor: Theme.of(context).accentColor,
                       ));
                     }
+                 
                   },
                   child: Stack(
                     alignment: Alignment.center,
@@ -89,6 +91,3 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-
-
-

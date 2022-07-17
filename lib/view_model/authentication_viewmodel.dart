@@ -109,6 +109,7 @@ class AuthenticationViewModel extends Cubit<AuthenticationState> {
   void onSignOutButtonPressed() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove("authData");
+    print("saliendo");
     emit(SignInState());
   }
 }

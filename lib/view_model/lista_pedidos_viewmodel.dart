@@ -19,6 +19,7 @@ class ListadoPedidosViewModel
   loadPedidos(
       LoadListadoPedidos event, Emitter<ListadoPedidosState> emit) async {
     List<Pedido> pedidos = await pedidosService.getPedidos();
+    pedidos = pedidos.reversed.toList();
     emit(state.copyWith(
         pedidos: pedidos, state: ListadoPedidosStateEnum.loaded));
   }
@@ -27,6 +28,8 @@ class ListadoPedidosViewModel
       FilterListadoPedidos event, Emitter<ListadoPedidosState> emit) async {
     List<Pedido> pedidos =
         await pedidosService.getPedidos(); //TODO: obtener desde la api
+            pedidos = pedidos.reversed.toList();
+
     if (event.filterString.isNotEmpty) {
       pedidos = pedidos
           .where((pedido) =>

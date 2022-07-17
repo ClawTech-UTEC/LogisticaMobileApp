@@ -29,4 +29,4 @@ class ControlRecepcionState {
   }
 }
 
-enum ControlRecepcionStateEnum { INITIAL, LOADED, ERROR, COMPLETED }
+enum ControlRecepcionStateEnum { INITIAL, LOADED, ERROR, COMPLETED, PRODUCTOAGREGADO }
