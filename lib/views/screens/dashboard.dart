@@ -7,6 +7,7 @@ import 'package:clawtech_logistica_app/views/screens/lista_pedidos_screen.dart';
 import 'package:clawtech_logistica_app/views/screens/lista_recepciones.dart';
 import 'package:clawtech_logistica_app/views/screens/reporte_pedidos_screen.dart';
 import 'package:clawtech_logistica_app/views/screens/reporte_recepciones_screen.dart';
+import 'package:clawtech_logistica_app/views/screens/ultima_mill_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -64,7 +65,8 @@ class _DashboardPageState extends State<DashboardPage> {
             ListadoPedidos(),
             ListadoRecepciones(),
             // DepositoView(),
-            MisDatosScreen()
+            MisDatosScreen(),
+            UltimaMilla(),
           ],
           controller: _pageController,
         ),
@@ -103,6 +105,13 @@ class _DashboardPageState extends State<DashboardPage> {
               icon: Icon(Icons.settings_outlined),
               activeIcon: Icon(Icons.settings),
               label: 'Mis Datos',
+              backgroundColor: Theme.of(context).backgroundColor,
+            ),
+
+            BottomNavigationBarItem(
+              icon: Icon(Icons.map_outlined),
+              activeIcon: Icon(Icons.map),
+              label: 'Ultima Milla',
               backgroundColor: Theme.of(context).backgroundColor,
             ),
           ],

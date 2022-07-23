@@ -67,8 +67,18 @@ class _ListadoRecepcionesState extends State<ListadoRecepciones> {
                                       ),
                                       title: Text(
                                           'Recepcion ${state.recepciones[index].idRecepcion}'),
-                                      subtitle: Text(
-                                          'Estado: ${state.recepciones[index].estadoRecepcion.last.tipoEstado.name}'),
+                                      subtitle: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          SizedBox(height: 10),
+                                          Text(
+                                              'Estado: ${state.recepciones[index].estadoRecepcion.last.tipoEstado.name}'),
+                                          SizedBox(height: 10),
+                                          Text(
+                                              "Proveedor: ${state.recepciones[index].provedor?.nombreProv}"),
+                                        ],
+                                      ),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(10),
                                       ),

@@ -7,8 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+Future main() async  {
+  await dotenv.load();  
   runApp(const MyApp());
 }
 
@@ -18,7 +20,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-
     return BlocProvider(
       create: (_) => AuthenticationViewModel(userService: UserService()),
       child: MaterialApp(

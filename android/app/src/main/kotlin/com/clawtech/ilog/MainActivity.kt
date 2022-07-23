@@ -1,4 +1,4 @@
-package com.example.clawtech_logistica_app
+package com.clawtech.ilog
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -41,6 +41,18 @@ class PedidosService {
     }
   }
 
+
+    Future<List<Pedido>> getPedidosByUsuario(int idUsuario) async {
+    final response =
+        await http.get(Uri.parse(apiBaseUrl + '/pedidos/distribuidor/${idUsuario}'));
+    if (response.statusCode == 200) {
+      final parsed = json.decode(response.body).cast<Map<String, dynamic>>();
+      return parsed.map<Pedido>((json) => Pedido.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to load pedidos');
+    }
+  }
+
   Future<List<Pedido>> getPedidosByDistribuidor(int idDistribuidor) async {
     final response =
         await http.post(Uri.parse(apiBaseUrl + '/pedidos/dist/'), body: {
