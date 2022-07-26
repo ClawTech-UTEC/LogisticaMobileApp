@@ -6,6 +6,7 @@ import 'package:clawtech_logistica_app/models/pedidos.dart';
 import 'package:clawtech_logistica_app/services/pedidos_service.dart';
 import 'package:clawtech_logistica_app/utils/confirmation_diolog.dart';
 import 'package:clawtech_logistica_app/views/screens/dashboard.dart';
+import 'package:clawtech_logistica_app/views/screens/loading_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -31,10 +32,6 @@ class _MapaRutaState extends State<MapaRuta> {
   late CameraPosition _kGooglePlex;
   GoogleMapController? _controller;
   Position? _currentPosition;
-  late PolylinePoints polylinePoints;
-  List<LatLng> polylineCoordinates = [];
-  Map<PolylineId, Polyline> polylines = {};
-  late Future<Set<Marker>> makers;
   String _currentAddress = '';
   final startAddressController = TextEditingController();
   final destinationAddressController = TextEditingController();
@@ -43,13 +40,8 @@ class _MapaRutaState extends State<MapaRuta> {
   String _startAddress = '';
   String _destinationAddress = '';
   String? _placeDistance;
-  Map<Pedido, double> pedidos = {};
-  Pedido? pedidoSeleccionado;
   PedidosService pedidosService = PedidosService();
-  late SharedPreferences prefs;
-  late AuthJwtData authData;
-  Set<Marker> markers = {};
-  Set<Polyline> polylinesSet = {};
+  late MapCubit cubit;
 
   @override
   void initState() {
@@ -58,233 +50,153 @@ class _MapaRutaState extends State<MapaRuta> {
       target: LatLng(latidudInicial, longitudInicial),
       zoom: 14.4746,
     );
-    widget.pedidos.forEach((pedido) {
-      pedidos[pedido] = 0.0;
-    });
+    cubit = MapCubit(
+      widget.pedidos,
+      latidudInicial,
+      longitudInicial,
+    );
   }
 
-  Future<void> crearRutas(double latitudIn, double longitudIn) async {
-    markers.clear();
-    polylinesSet.clear();
-    polylineCoordinates.clear();
-
-    Marker _marker = Marker(
-      markerId: MarkerId('1'),
-      position: LatLng(latitudIn, longitudIn),
-      infoWindow: InfoWindow(
-        title: 'Clawtech',
-        snippet: 'Av. Las Heras 1234',
-      ),
-    );
-    prefs = await SharedPreferences.getInstance();
-    authData = AuthJwtData.fromJson(jsonDecode(prefs.getString("authData")!));
-    markers.add(_marker);
-    double latitudAnterior = latidudInicial;
-    double longitudAnterior = longitudInicial;
-    for (var pedido in pedidos.keys) {
-      GeoData data = await Geocoder2.getDataFromAddress(
-          address: pedido.direccion,
-          googleMapApiKey: dotenv.env['GOOGLE_MAPS_API_KEY']!);
-      markers.add(Marker(
-        markerId: MarkerId(pedido.idPedido.toString()),
-        position: LatLng(data.latitude, data.longitude),
-        infoWindow: InfoWindow(
-          title: pedido.cliente.razonSocial,
-          snippet: pedido.direccion,
-        ),
-      ));
-    }
-    ;
-    List<Marker> _markersOrdenadoDistancia = [];
-    List<Marker> _markersParaOrdenar = markers.toList();
-    Marker markerMasCercano = _markersParaOrdenar.first;
-    _markersParaOrdenar.remove(markerMasCercano);
-    Marker nuevoMarkadorMasCercano = markerMasCercano;
-    while (_markersParaOrdenar.isNotEmpty) {
-      double distanciaMasCercano = double.infinity;
-      for (var marker in _markersParaOrdenar) {
-        double distancia = _coordinateDistance(
-          markerMasCercano.position.latitude,
-          markerMasCercano.position.longitude,
-          marker.position.latitude,
-          marker.position.longitude,
-        );
-        if (distancia < distanciaMasCercano) {
-          distanciaMasCercano = distancia;
-          nuevoMarkadorMasCercano = marker;
-        }
-      }
-      _markersOrdenadoDistancia.add(nuevoMarkadorMasCercano);
-      pedidos[pedidos.keys.firstWhere((pedido) =>
-              pedido.idPedido ==
-              int.parse(nuevoMarkadorMasCercano.markerId.value))] =
-          distanciaMasCercano;
-      _markersParaOrdenar.remove(nuevoMarkadorMasCercano);
-      markerMasCercano = nuevoMarkadorMasCercano;
-    }
-    pedidoSeleccionado = pedidos.keys.first;
-
-    for (Marker data in _markersOrdenadoDistancia) {
-      await _createPolylines(latitudAnterior, longitudAnterior,
-          data.position.latitude, data.position.longitude);
-      latitudAnterior = data.position.latitude;
-      longitudAnterior = data.position.longitude;
-      print(data.position.latitude);
-    }
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FutureBuilder(
-          future: crearRutas(latidudInicial, longitudInicial),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              return Stack(
-                children: [
-                  GoogleMap(
-                    mapType: MapType.normal,
-                    initialCameraPosition: _kGooglePlex,
-                    onMapCreated: (GoogleMapController controller) {
-                      _controller = controller;
-                      // _getCurrentLocation();
-                    },
-                    markers: markers,
-                    polylines: polylinesSet,
-                  ),
-                  SafeArea(
-                    child: Align(
-                      alignment: Alignment.topCenter,
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 10.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white70,
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(20.0),
-                            ),
-                          ),
-                          width: MediaQuery.of(context).size.width * 0.9,
-                          child: Padding(
-                            padding:
-                                const EdgeInsets.only(top: 10.0, bottom: 10.0),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                Text(
-                                  'Siguiente Pedido: ${pedidoSeleccionado?.cliente.razonSocial}\n${pedidoSeleccionado?.direccion}',
-                                  style: Theme.of(context).textTheme.bodyMedium,
-                                  textAlign: TextAlign.center,
-                                ),
-                                SizedBox(height: 10),
-                                SizedBox(height: 10),
-                                SizedBox(height: 10),
-                                Visibility(
-                                  visible:
-                                      true, //_placeDistance == null ? false : true,
-                                  child: Text(
-                                    'DISTANCIA:  km ${pedidos[pedidoSeleccionado]?.toStringAsFixed(2)} ',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(height: 5),
-                                ElevatedButton(
-                                  onPressed: () async {
-                                    confirmarcionDiolog(
-                                        context: context,
-                                        title:
-                                            "¿Desea marcar el pedido como entregado?",
-                                        onConfirm: () async {
-                                          pedidosService
-                                              .entregarPedido(
-                                                  pedidoSeleccionado!.idPedido!,
-                                                  authData.idUsuario)
-                                              .then((value) {
-                                            Scaffold.of(context)
-                                                .showSnackBar(SnackBar(
-                                              backgroundColor:
-                                                  Theme.of(context).accentColor,
-                                              content: Text('Pedido entregado'),
-                                            ));
+      body: BlocBuilder<MapCubit, MapState>(
+          bloc: cubit..loadData(),
+          builder: (context, state) {
+            if (state.ultimaMillaState == UltimaMillaStateEnum.INITIAL) {
+              return LoadingPage();
+            }
 
-                                            pedidos.remove(pedidoSeleccionado);
-                                            if (pedidos.isEmpty) {
-                                              showDialog(
-                                                context: context,
-                                                builder: (ctx) => AlertDialog(
-                                                  title: Text(
-                                                      "Se Completo el Reparto"),
-                                                  actions: <Widget>[
-                                                    FlatButton(
-                                                      onPressed: () {
-                                                        Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                                builder:
-                                                                    (context) =>
-                                                                        DashboardPage()));
-                                                      },
-                                                      child: Text("Ok"),
-                                                    ),
-                                                  ],
-                                                ),
-                                              );
-                                              return;
-                                            } else {
-                                              setState(() {});
-                                            }
-                                            // markers.remove(markers.firstWhere(
-                                            //     (marker) =>
-                                            //         marker.markerId.value ==
-                                            //         pedidoSeleccionado!
-                                            //             .idPedido
-                                            //             .toString()));
-                                          }).catchError((onError) => {
-                                                    Scaffold.of(context)
-                                                        .showSnackBar(SnackBar(
-                                                      backgroundColor:
-                                                          Theme.of(context)
-                                                              .accentColor,
-                                                      content: Text(
-                                                          'Error al entregar pedido'),
-                                                    ))
-                                                  });
-                                        });
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      'Entregar Pedido'.toUpperCase(),
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 20.0,
-                                      ),
-                                    ),
+            return Stack(
+              children: [
+                GoogleMap(
+                  mapType: MapType.normal,
+                  initialCameraPosition: _kGooglePlex,
+                  onMapCreated: (GoogleMapController controller) {
+                    _controller = controller;
+                    // _getCurrentLocation();
+                  },
+                  markers: state.markers,
+                  polylines: state.polylinesSet,
+                ),
+                SafeArea(
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white70,
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(20.0),
+                          ),
+                        ),
+                        width: MediaQuery.of(context).size.width * 0.9,
+                        child: Padding(
+                          padding:
+                              const EdgeInsets.only(top: 10.0, bottom: 10.0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Text(
+                                "Siguiente pedido:",
+                                style: Theme.of(context).textTheme.bodyMedium,
+                                textAlign: TextAlign.center,
+                              ),
+                              Text(
+                                'Cliente: ${state.pedidoSeleccionado?.cliente.razonSocial}\n Direccion: ${state.pedidoSeleccionado?.direccion}',
+                                style: Theme.of(context).textTheme.bodyMedium,
+                                textAlign: TextAlign.center,
+                              ),
+                              SizedBox(height: 10),
+                              SizedBox(height: 10),
+                              SizedBox(height: 10),
+                              Visibility(
+                                visible:
+                                    true, //_placeDistance == null ? false : true,
+                                child: Text(
+                                  'DISTANCIA:  km ${state.pedidosDistancia[state.pedidoSeleccionado]?.toStringAsFixed(2)}\n Tiempo estimado: ${(state.pedidosDistancia[state.pedidoSeleccionado]! * 1.5).toStringAsFixed(2)} min',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                  style: ElevatedButton.styleFrom(
-                                    primary: Colors.blue,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20.0),
+                                ),
+                              ),
+                              SizedBox(height: 5),
+                              ElevatedButton(
+                                onPressed: () async {
+                                  confirmarcionDiolog(
+                                      context: context,
+                                      title:
+                                          "¿Desea marcar el pedido como entregado?",
+                                      onConfirm: () async {
+                                        cubit.entregarPedido(
+                                            state.pedidoSeleccionado!,
+                                            pedidosService,
+                                            context);
+                                      });
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    'Entregar Pedido'.toUpperCase(),
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20.0,
                                     ),
                                   ),
                                 ),
-                              ],
-                            ),
+                                style: ElevatedButton.styleFrom(
+                                  primary: Colors.blue,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 5),
+                              ElevatedButton(
+                                onPressed: () async {
+                                  confirmarcionDiolog(
+                                      context: context,
+                                      title: "¿Desea no entregar el pedido?",
+                                      onConfirm: () async {
+                                        cubit.noEntregarPedido(
+                                            state.pedidoSeleccionado!, context);
+                                      });
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    'No Entregar Pedido'.toUpperCase(),
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20.0,
+                                    ),
+                                  ),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  primary: Colors.blue,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
                     ),
                   ),
-                ],
-              );
-            } else {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            }
+                ),
+              ],
+            );
           }),
     );
   }
@@ -363,48 +275,6 @@ class _MapaRutaState extends State<MapaRuta> {
     );
   }
 
-  _createPolylines(
-    double startLatitude,
-    double startLongitude,
-    double destinationLatitude,
-    double destinationLongitude,
-  ) async {
-    polylinePoints = PolylinePoints();
-
-    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-      dotenv.env['GOOGLE_MAPS_API_KEY']!, // Google Maps API Key
-      PointLatLng(startLatitude, startLongitude),
-      PointLatLng(destinationLatitude, destinationLongitude),
-      travelMode: TravelMode.driving,
-    );
-
-    if (result.points.isNotEmpty) {
-      result.points.forEach((PointLatLng point) {
-        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
-      });
-    }
-
-    PolylineId id = PolylineId('poly');
-
-    Polyline polyline = Polyline(
-      polylineId: id,
-      color: Colors.blue,
-      points: polylineCoordinates,
-      width: 3,
-    );
-    polylines[id] = polyline;
-    polylinesSet.add(polyline);
-  }
-
-  double _coordinateDistance(lat1, lon1, lat2, lon2) {
-    var p = 0.017453292519943295;
-    var c = cos;
-    var a = 0.5 -
-        c((lat2 - lat1) * p) / 2 +
-        c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
-    return 12742 * asin(sqrt(a));
-  }
-
   _getAddress() async {
     try {
       List<Placemark> p = await placemarkFromCoordinates(
@@ -427,15 +297,92 @@ class _MapaRutaState extends State<MapaRuta> {
 class MapState {
   Set<Marker> markers = {};
   Set<Polyline> polylinesSet = {};
-  List<LatLng> polylineCoordinates = [];
-  Map<PolylineId, Polyline> polylines = {};
-  Map<Pedido, double> pedidos = {};
+  Map<Pedido, double> pedidosDistancia = {};
+  List<Pedido> pedidos;
+  double latitudInicial;
+  double longitudInicial;
+  SharedPreferences? prefs;
+  AuthJwtData? authData;
+  Pedido? pedidoSeleccionado;
+  PolylinePoints? polylinePoints;
+  UltimaMillaStateEnum ultimaMillaState;
 
-  MapState();
+  MapState({
+    required this.pedidos,
+    required this.latitudInicial,
+    required this.longitudInicial,
+    this.pedidoSeleccionado,
+    this.ultimaMillaState = UltimaMillaStateEnum.INITIAL,
+    this.polylinePoints,
+    this.prefs,
+    this.authData,
+    this.polylinesSet = const {},
+    this.pedidosDistancia = const {},
+    this.markers = const {},
+  }) {}
+
+  copyWith({
+    Set<Marker>? markers,
+    Set<Polyline>? polylinesSet,
+    Map<Pedido, double>? pedidosDistancia,
+    List<Pedido>? pedidos,
+    double? latitudInicial,
+    double? longitudInicial,
+    Pedido? pedidoSeleccionado,
+    UltimaMillaStateEnum? ultimaMillaState,
+    PolylinePoints? polylinePoints,
+    SharedPreferences? prefs,
+    AuthJwtData? authData,
+  }) {
+    return MapState(
+      markers: markers ?? this.markers,
+      polylinesSet: polylinesSet ?? this.polylinesSet,
+      pedidosDistancia: pedidosDistancia ?? this.pedidosDistancia,
+      pedidos: pedidos ?? this.pedidos,
+      latitudInicial: latitudInicial ?? this.latitudInicial,
+      longitudInicial: longitudInicial ?? this.longitudInicial,
+      pedidoSeleccionado: pedidoSeleccionado ?? this.pedidoSeleccionado,
+      ultimaMillaState: ultimaMillaState ?? this.ultimaMillaState,
+      polylinePoints: polylinePoints ?? this.polylinePoints,
+      prefs: prefs ?? this.prefs,
+      authData: authData ?? this.authData,
+    );
+  }
 }
 
-class CounterCubit extends Cubit<MapState> {
-  CounterCubit() : super(MapState());
+class MapCubit extends Cubit<MapState> {
+  MapCubit(List<Pedido> pedidos, double lat, double lng)
+      : super(MapState(
+            pedidos: pedidos, latitudInicial: lat, longitudInicial: lng));
+
+  void loadData() async {
+    Map<Pedido, double> mapaPedidosDistancia = {};
+    Set<Marker> markers = await getMarkersDePedidos(
+        state.pedidos, state.latitudInicial, state.longitudInicial);
+    List<Marker> markersOrdenados = await getListaMarcadoresOrdenada(
+        mapaPedidosDistanacia: mapaPedidosDistancia,
+        markers: markers.toList(),
+        latitudIn: state.latitudInicial,
+        longitudIn: state.longitudInicial);
+
+    Set<Polyline> polylinesSet = await getPolylinesDePedidos(
+        markersOrdenados, state.latitudInicial, state.longitudInicial);
+    Pedido pedidoSeleccionado = mapaPedidosDistancia.keys.first;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    AuthJwtData authData =
+        AuthJwtData.fromJson(jsonDecode(prefs.getString("authData")!));
+
+    MapState mapState = state.copyWith(
+        markers: markers,
+        polylinesSet: polylinesSet,
+        pedidosDistancia: mapaPedidosDistancia,
+        pedidoSeleccionado: pedidoSeleccionado,
+        prefs: prefs,
+        authData: authData,
+        ultimaMillaState: UltimaMillaStateEnum.LOADED);
+    emit(mapState);
+  }
+
   void addMarker(Marker marker) {
     state.markers.add(marker);
     emit(state);
@@ -443,16 +390,6 @@ class CounterCubit extends Cubit<MapState> {
 
   void addPolyline(Polyline polyline) {
     state.polylinesSet.add(polyline);
-    emit(state);
-  }
-
-  void addPolylineCoordinates(LatLng latLng) {
-    state.polylineCoordinates.add(latLng);
-    emit(state);
-  }
-
-  void addPolylines(Map<PolylineId, Polyline> polylines) {
-    state.polylines = polylines;
     emit(state);
   }
 
@@ -466,16 +403,6 @@ class CounterCubit extends Cubit<MapState> {
     emit(state);
   }
 
-  void removePolylineCoordinates(LatLng latLng) {
-    state.polylineCoordinates.remove(latLng);
-    emit(state);
-  }
-
-  void removePolylines(Map<PolylineId, Polyline> polylines) {
-    state.polylines = polylines;
-    emit(state);
-  }
-
   void clearMarkers() {
     state.markers.clear();
     emit(state);
@@ -486,21 +413,118 @@ class CounterCubit extends Cubit<MapState> {
     emit(state);
   }
 
-  void clearPolylineCoordinates() {
-    state.polylineCoordinates.clear();
-    emit(state);
-  }
-
-  
-
-  void addPedido(Pedido pedido, double distance) {
-    state.pedidos[pedido] = distance;
-    emit(state);
-  }
-
   void removePedido(Pedido pedido) {
     state.pedidos.remove(pedido);
     emit(state);
+  }
+
+  void entregarPedido(
+      Pedido pedido, PedidosService pedidosService, context) async {
+    pedidosService
+        .entregarPedido(
+            state.pedidoSeleccionado!.idPedido!, state.authData!.idUsuario)
+        .then((value) async {
+      Scaffold.of(context).showSnackBar(SnackBar(
+        backgroundColor: Theme.of(context).accentColor,
+        content: Text('Pedido entregado'),
+      ));
+      state.pedidos.remove(pedido);
+
+      if (state.pedidos.isEmpty) {
+        showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text("Se Completo el Reparto"),
+            actions: <Widget>[
+              FlatButton(
+                onPressed: () {
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) => DashboardPage()));
+                },
+                child: Text("Ok"),
+              ),
+            ],
+          ),
+        );
+        return;
+      }
+
+      List<Pedido> pedidos = state.pedidos.toList();
+
+      Map<Pedido, double> mapaPedidosDistancia = {};
+      Set<Marker> markers = await getMarkersDePedidos(
+          pedidos, state.latitudInicial, state.longitudInicial);
+      List<Marker> markersOrdenados = await getListaMarcadoresOrdenada(
+          mapaPedidosDistanacia: mapaPedidosDistancia,
+          markers: markers.toList(),
+          latitudIn: state.latitudInicial,
+          longitudIn: state.longitudInicial);
+
+      Set<Polyline> polylinesSet = await getPolylinesDePedidos(
+          markersOrdenados, state.latitudInicial, state.longitudInicial);
+      Pedido pedidoSeleccionado = mapaPedidosDistancia.keys.first;
+      MapState mapState = state.copyWith(
+          markers: markers,
+          polylinesSet: polylinesSet,
+          pedidosDistancia: mapaPedidosDistancia,
+          pedidoSeleccionado: pedidoSeleccionado,
+          ultimaMillaState: UltimaMillaStateEnum.LOADED);
+      emit(mapState);
+    }).catchError((onError) => {
+              Scaffold.of(context).showSnackBar(SnackBar(
+                backgroundColor: Theme.of(context).accentColor,
+                content: Text('Error al entregar pedido'),
+              ))
+            });
+  }
+
+  void noEntregarPedido(Pedido pedido, context) async {
+    state.pedidos.remove(pedido);
+    Scaffold.of(context).showSnackBar(SnackBar(
+      backgroundColor: Theme.of(context).accentColor,
+      content: Text('Pedido no entregado'),
+    ));
+    Future.sync(() => null).then((value) async {if (state.pedidos.isEmpty)  {
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text("Se Termino el Reparto"),
+          actions: <Widget>[
+            FlatButton(
+              onPressed: () {
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => DashboardPage()));
+              },
+              child: Text("Ok"),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    List<Pedido> pedidos = state.pedidos.toList();
+
+    Map<Pedido, double> mapaPedidosDistancia = {};
+    Set<Marker> markers = await getMarkersDePedidos(
+        pedidos, state.latitudInicial, state.longitudInicial);
+    List<Marker> markersOrdenados = await getListaMarcadoresOrdenada(
+        mapaPedidosDistanacia: mapaPedidosDistancia,
+        markers: markers.toList(),
+        latitudIn: state.latitudInicial,
+        longitudIn: state.longitudInicial);
+
+    Set<Polyline> polylinesSet = await getPolylinesDePedidos(
+        markersOrdenados, state.latitudInicial, state.longitudInicial);
+    Pedido pedidoSeleccionado = mapaPedidosDistancia.keys.first;
+    MapState mapState = state.copyWith(
+        markers: markers,
+        polylinesSet: polylinesSet,
+        pedidosDistancia: mapaPedidosDistancia,
+        pedidoSeleccionado: pedidoSeleccionado,
+        ultimaMillaState: UltimaMillaStateEnum.LOADED);
+    emit(mapState);});
+    
   }
 
   void clearPedidos() {
@@ -511,10 +535,156 @@ class CounterCubit extends Cubit<MapState> {
   void clearAll() {
     clearMarkers();
     clearPolylines();
-    clearPolylineCoordinates();
     clearPedidos();
   }
-  
 
-  
+  Map<Pedido, double> getMapaPedidosDistanaciaVacio(List<Pedido> pedidos) {
+    Map<Pedido, double> mapaPedidosDistanacia = {};
+
+    pedidos.forEach((pedido) {
+      mapaPedidosDistanacia[pedido] = 0.0;
+    });
+
+    return mapaPedidosDistanacia;
+  }
+
+  Future<Set<Marker>> getMarkersDePedidos(
+      List<Pedido> pedidos, double latitudIn, double longitudIn) async {
+    Set<Marker> markers = {};
+    Marker _marker = Marker(
+      markerId: MarkerId('1'),
+      position: LatLng(latitudIn, longitudIn),
+      infoWindow: InfoWindow(
+        title: 'Clawtech',
+        snippet: 'Av. Las Heras 1234',
+      ),
+    );
+    markers.add(_marker);
+    for (var pedido in pedidos) {
+      GeoData data = await Geocoder2.getDataFromAddress(
+          address: pedido.direccion,
+          googleMapApiKey: dotenv.env['GOOGLE_MAPS_API_KEY']!);
+      markers.add(Marker(
+        markerId: MarkerId(pedido.idPedido.toString()),
+        position: LatLng(data.latitude, data.longitude),
+        infoWindow: InfoWindow(
+          title: pedido.cliente.razonSocial,
+          snippet: pedido.direccion,
+        ),
+      ));
+    }
+    ;
+    return markers;
+  }
+
+  List<Marker> getListaMarcadoresOrdenada(
+      {required List<Marker> markers,
+      required Map<Pedido, double> mapaPedidosDistanacia,
+      required double latitudIn,
+      required double longitudIn}) {
+    List<Marker> _markersOrdenadoDistancia = [];
+    List<Marker> _markersParaOrdenar = markers.toList();
+    Marker markerMasCercano = _markersParaOrdenar.first;
+
+    _markersOrdenadoDistancia.add(markerMasCercano);
+    _markersParaOrdenar.remove(markerMasCercano);
+    Marker nuevoMarkadorMasCercano = markerMasCercano;
+    while (_markersParaOrdenar.isNotEmpty) {
+      double distanciaMasCercano = double.infinity;
+      for (var marker in _markersParaOrdenar) {
+        double distancia = _coordinateDistance(
+          latitudIn,
+          longitudIn,
+          marker.position.latitude,
+          marker.position.longitude,
+        );
+        if (distancia < distanciaMasCercano) {
+          distanciaMasCercano = distancia;
+          nuevoMarkadorMasCercano = marker;
+        }
+      }
+      _markersOrdenadoDistancia.add(nuevoMarkadorMasCercano);
+      mapaPedidosDistanacia[state.pedidos.firstWhere((pedido) =>
+              pedido.idPedido ==
+              int.parse(nuevoMarkadorMasCercano.markerId.value))] =
+          distanciaMasCercano;
+      _markersParaOrdenar.remove(nuevoMarkadorMasCercano);
+      markerMasCercano = nuevoMarkadorMasCercano;
+    }
+
+    return _markersOrdenadoDistancia;
+  }
+
+  Future<Set<Polyline>> getPolylinesDePedidos(
+      List<Marker> _markersOrdenadoDistancia,
+      double latitudInicial,
+      double longitudInicial) async {
+    Set<Polyline> polylines = {};
+    double latitudAnterior = latitudInicial;
+    double longitudAnterior = longitudInicial;
+    for (Marker data in _markersOrdenadoDistancia) {
+      polylines.add(await _createPolylines(
+          latitudAnterior,
+          longitudAnterior,
+          data.position.latitude,
+          data.position.longitude,
+          data.markerId.value));
+      latitudAnterior = data.position.latitude;
+      longitudAnterior = data.position.longitude;
+
+      print(data.position.latitude);
+    }
+    return polylines;
+  }
+
+  Future<Polyline> _createPolylines(
+      double startLatitude,
+      double startLongitude,
+      double destinationLatitude,
+      double destinationLongitude,
+      String marketId) async {
+    PolylinePoints polylinePoints = PolylinePoints();
+    List<LatLng> polylineCoordinates = [];
+
+    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+      dotenv.env['GOOGLE_MAPS_API_KEY']!, // Google Maps API Key
+      PointLatLng(startLatitude, startLongitude),
+      PointLatLng(destinationLatitude, destinationLongitude),
+      travelMode: TravelMode.driving,
+    );
+
+    if (result.points.isNotEmpty) {
+      result.points.forEach((PointLatLng point) {
+        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+      });
+    }
+
+    PolylineId id = PolylineId(marketId);
+
+    Polyline polyline = Polyline(
+      polylineId: id,
+      color: Colors.blue,
+      points: polylineCoordinates,
+      width: 3,
+    );
+    return polyline;
+  }
+
+  double _coordinateDistance(lat1, lon1, lat2, lon2) {
+    var p = 0.017453292519943295;
+    var c = cos;
+    var a = 0.5 -
+        c((lat2 - lat1) * p) / 2 +
+        c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
+    return 12742 * asin(sqrt(a));
+  }
 }
+
+abstract class UltimaMillaEvent {}
+
+class UltimaMillaEventEntregarPedido extends UltimaMillaEvent {
+  final Pedido pedido;
+  UltimaMillaEventEntregarPedido(this.pedido);
+}
+
+enum UltimaMillaStateEnum { INITIAL, LOADED, ERROR, COMPLETED }

@@ -123,7 +123,7 @@ class _UltimaMillaState extends State<UltimaMilla> {
                                     pedidos: pedidosSeleccion,
                                   )));
                     },
-                    child: Text('Ver ultima milla')),
+                    child: Text('Ver Ruta')),
               ],
             );
           } else {
